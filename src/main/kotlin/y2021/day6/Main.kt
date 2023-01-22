@@ -2,11 +2,9 @@ package y2021.day6
 
 import utils.Puzzle
 import utils.RunMode
-import utils.debug
 
 class Main : Puzzle {
 
-    var totalFish: Long = 0L
     private fun runSimulation(totalDays: Int, fishes: List<Int>): Long {
         return fishes.sumOf { dayOfFirstChild ->
             runIndividualSimulation(dayOfFirstChild, totalDays)
@@ -48,7 +46,6 @@ class Main : Puzzle {
             }
 
             (0 until numNew).map { 8L }.forEach { currentState.add(it) }
-//            println("After day ${it+1}  $currentState")
         }
 
         return currentState.count()

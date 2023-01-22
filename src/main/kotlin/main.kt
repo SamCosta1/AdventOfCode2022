@@ -31,5 +31,5 @@ import kotlin.system.measureTimeMillis
 fun main() {
 //    Main2022.runAll()
 //    Main2021.runAll()
-    Main2021.run(6)
+    Main2021.run(7)
 }
