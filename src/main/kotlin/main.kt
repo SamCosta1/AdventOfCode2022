@@ -1,3 +1,4 @@
+import y2021.Main2021
 import y2022.Main2022
 import y2022.day1.Day1Main
 import y2022.day10.Day10Main
@@ -23,8 +24,12 @@ import y2022.day6.Day6Main
 import y2022.day7.Day7Main
 import y2022.day8.Day8Main
 import y2022.day9.Day9Main
+import java.nio.file.Files
+import java.nio.file.Paths
 import kotlin.system.measureTimeMillis
 
 fun main() {
-    Main2022.runAll()
+//    Main2022.runAll()
+//    Main2021.runAll()
+    Main2021.run(6)
 }

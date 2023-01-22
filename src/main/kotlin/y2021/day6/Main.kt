@@ -8,26 +8,29 @@ class Main : Puzzle {
 
     var totalFish: Long = 0L
     private fun runSimulation(totalDays: Int, fishes: List<Int>): Long {
-        fishes.forEach { dayOfFirstChild ->
+        return fishes.sumOf { dayOfFirstChild ->
             runIndividualSimulation(dayOfFirstChild, totalDays)
-        }
-
-        totalFish += fishes.size
-        return totalFish
+        } + fishes.size.toLong()
     }
 
-    private fun runIndividualSimulation(dayOfFirstChild: Int, totalDays: Int) {
+    private val cache = mutableMapOf<Int, Long>()
+    private fun runIndividualSimulation(dayOfFirstChild: Int, totalDays: Int): Long {
         if (dayOfFirstChild >= totalDays) {
-            return
+            return 0
+        }
+
+        if (cache.containsKey(dayOfFirstChild)) {
+            return cache[dayOfFirstChild]!!
         }
 
         val childrenProduced = 1 + (totalDays - dayOfFirstChild - 1) / 7
-//        println("Fish which starts at ${dayOfFirstChild.debug()} produced $childrenProduced")
-        totalFish += childrenProduced
 
-        repeat(childrenProduced) { childIndex ->
+        val total = (0 until childrenProduced).sumOf { childIndex ->
             runIndividualSimulation(9 + dayOfFirstChild + 7 * childIndex, totalDays)
-        }
+        } + childrenProduced
+        cache[dayOfFirstChild] = total
+
+        return total
     }
 
     private fun runNaiive(days: Int, values: List<Long>): Any {
