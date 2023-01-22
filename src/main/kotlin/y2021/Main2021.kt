@@ -4,25 +4,26 @@ import utils.*
 import utils.runTimed
 
 object Main2021 {
-    private val allDays =
-        (1..25).take(5).map { Class.forName("y2021.day$it.Main") }
 
-    fun runAll() = allDays.forEachIndexed { index, puzzle ->
-        p1Sample(index, puzzle)
-        p1Real(index, puzzle)
-        p2Sample(index, puzzle)
-        p2Real(index, puzzle)
+    fun run(day: Int) = Class.forName("y2021.day$day.Main").also { clazz ->
+        p1Sample(day, clazz)
+        p1Real(day, clazz)
+        p2Sample(day, clazz)
+        p2Real(day, clazz)
         println()
+
     }
 
-    private fun p2Real(index: Int, puzzle: Class<*>) {
+    fun runAll() = (1..25).forEach(::run)
+
+    private fun p2Real(day: Int, puzzle: Class<*>) {
         println(
-            "Day ${(index + 1).debug()} Part 2  -  Real: ${
+            "Day ${(day).debug()} Part 2  -  Real: ${
                 runTimed {
                     (puzzle.getConstructor().newInstance() as Puzzle).runPart2(
                         parseFile(
                             2021,
-                            index + 1,
+                            day,
                             "data.txt"
                         ), RunMode.Real
                     )
@@ -31,14 +32,14 @@ object Main2021 {
         )
     }
 
-    private fun p2Sample(index: Int, puzzle: Class<*>) {
+    private fun p2Sample(day: Int, puzzle: Class<*>) {
         println(
-            "Day ${(index + 1).debug()} Part 2 - Sample: ${
+            "Day ${day.debug()} Part 2 - Sample: ${
                 runTimed {
                     (puzzle.getConstructor().newInstance() as Puzzle).runPart2(
                         parseFile(
                             2021,
-                            index + 1,
+                            day,
                             "sample.txt"
                         ), RunMode.Sample
                     )
@@ -47,14 +48,14 @@ object Main2021 {
         )
     }
 
-    private fun p1Real(index: Int, puzzle: Class<*>) {
+    private fun p1Real(day: Int, puzzle: Class<*>) {
         println(
-            "Day ${(index + 1).debug()} Part 1  -  Real: ${
+            "Day ${day.debug()} Part 1  -  Real: ${
                 runTimed {
                     (puzzle.getConstructor().newInstance() as Puzzle).runPart1(
                         parseFile(
                             2021,
-                            index + 1,
+                            day,
                             "data.txt"
                         ), RunMode.Real
                     )
@@ -63,14 +64,14 @@ object Main2021 {
         )
     }
 
-    private fun p1Sample(index: Int, puzzle: Class<*>) {
+    private fun p1Sample(day: Int, puzzle: Class<*>) {
         println(
-            "Day ${(index + 1).debug()} Part 1 - Sample: ${
+            "Day ${(day).debug()} Part 1 - Sample: ${
                 runTimed {
                     (puzzle.getConstructor().newInstance() as Puzzle).runPart1(
                         parseFile(
                             2021,
-                            index + 1,
+                            day,
                             "sample.txt"
                         ), RunMode.Sample
                     )

@@ -19,7 +19,7 @@ class Main : Puzzle {
     private fun Pair<Point, Point>.isNotDiagonal() = first.x == second.x || first.y == second.y
 
     private fun Pair<Point, Point>.allPoints(): List<Point> {
-        val points = mutableSetOf<Point>(first, second)
+        val points = mutableSetOf(first, second)
 
         var currentPoint = first
 
