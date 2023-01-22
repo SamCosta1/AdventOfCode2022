@@ -10,5 +10,12 @@ class Main: Puzzle {
         }
     }
 
-    override fun runPart2(data: List<String>, runMode: RunMode): Any = ""
+    override fun runPart2(data: List<String>, runMode: RunMode) = data.map { it.toInt() }.let { measurments ->
+        (2 until measurments.lastIndex).count { index ->
+            val previousSum = measurments[index - 2] + measurments[index -1] + measurments[index]
+            val thisSum = measurments[index - 1] + measurments[index] + measurments[index + 1]
+
+            thisSum > previousSum
+        }
+    }
 }
