@@ -38,4 +38,3 @@ class Main: Puzzle {
         return -1
     }
 }
-// 27145 too high
