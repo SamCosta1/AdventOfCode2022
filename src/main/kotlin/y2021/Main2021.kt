@@ -5,7 +5,7 @@ import utils.runTimed
 
 object Main2021 {
     private val allDays =
-        (1..25).take(1).map { Class.forName("y2021.day$it.Main") }
+        (1..25).take(3).map { Class.forName("y2021.day$it.Main") }
 
     fun runAll() = allDays.forEachIndexed { index, puzzle ->
         println(
