@@ -16,32 +16,25 @@ class Main : Puzzle {
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { grid ->
         val pointsToBasin = mutableMapOf<Point, Basin>()
 
-        (0L until grid.height).forEach { y ->
-            (0L until grid.width).forEach { x ->
-                val point = Point(x, y)
-                if (grid.points[point] != 9) {
-                    val left = pointsToBasin[Point(x - 1, y)]
-                    val above = pointsToBasin[Point(x, y-1)]
-
-                    if (left != null && above != null && left != above) {
-                        pointsToBasin[Point(x - 1, y)] = above
-                        above.points.add(Point(x - 1, y))
-                    }
-
-                    val basin = above ?: left ?: Basin(mutableSetOf())
-                    basin.points.add(point)
-                    pointsToBasin[point] = basin
+        grid.points.forEach { (point, value) ->
+            if (value != 9 && !pointsToBasin.containsKey(point)) {
+                pointsToBasin[point] = Basin(mutableSetOf()).also {
+                    formBasin(it, grid, point)
                 }
             }
         }
 
-        val basins = mutableSetOf<Basin>()
-        pointsToBasin.keys.forEach {
-
-        }
-
         pointsToBasin.values.toSet().sortedBy { it.points.size }.takeLast(3).let {
             it[0].points.size * it[1].points.size * it[2].points.size
+        }
+    }
+
+    private fun formBasin(currentBasin: Basin, grid: Grid, currentPoint: Point) {
+        grid.adjacentNodes(currentPoint.x, currentPoint.y).filter {
+            grid.points[it] != 9 && !currentBasin.points.contains(it)
+        }.forEach {
+            currentBasin.points.add(it)
+            formBasin(currentBasin, grid, it)
         }
     }
 }
