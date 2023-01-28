@@ -3,6 +3,7 @@ package y2021.day8
 import utils.Puzzle
 import utils.RunMode
 import java.lang.Exception
+import kotlin.math.pow
 
 class Main : Puzzle {
 
@@ -23,38 +24,49 @@ class Main : Puzzle {
         it.split("|").last().split(" ")
     }.flatten().count { it.isUnique() }
 
-    private fun newPossiblitiesSet() = "abcdefg".map { it.toString() }.toMutableSet()
+    private fun newPossiblitiesSet() = "abcdefg".map { it.toString() }.toSet()
     private fun String.isUnique() = trim().length in listOf(3, 2, 7, 4)
-    override fun runPart2(data: List<String>, runMode: RunMode) = data.map { raw ->
+
+    private fun String.containsAllCharsIn(other: String) = other.all { contains(it) }
+    override fun runPart2(data: List<String>, runMode: RunMode) = data.sumBy { raw ->
         val combos = raw.split("|").first().split(" ").mapNotNull { it.takeUnless { it.isBlank() } }
+            .map { it.toList().sorted().joinToString("") }
         val outputs = raw.split("|").last().split(" ").mapNotNull { it.takeUnless { it.isBlank() } }
+            .map { it.toList().sorted().joinToString("") }
 
-        val possibilities = "abcdefg".map { it.toString() }.map { it to newPossiblitiesSet() }.toMap().toMutableMap()
-        var comboIndex = 0
-
+        val results = mutableMapOf<Int, String>()
         combos.forEach { combo ->
-            val match = numbers.filter { it.size == combo.length }.flatten()
-            combo.map { it.toString() }.forEach { character ->
-//                println(
-//                    "$character current possibilities : ${possibilities[character]} match: $match  new: ${
-//                        possibilities[character]!!.intersect(
-//                            match
-//                        ).toMutableSet()
-//                    }"
-//                )
-                possibilities[character] = possibilities[character]!!.intersect(match).toMutableSet()
-
+            if (combo.isUnique()) {
+                results[numbers.indexOfFirst { it.size == combo.length }] = combo
             }
         }
 
-        println("After step 1: ${possibilities}")
-
         combos.filter { it.length == 6 }.forEach { combo ->
-
+            if (!combo.containsAllCharsIn(results.getOrDefault(1, "X")) && !combo.containsAllCharsIn(results.getOrDefault(7, "X"))) {
+                results[6] = combo
+            } else if (combo.containsAllCharsIn(results.getOrDefault(4, "X"))) {
+                results[9] = combo
+            } else {
+                results[0] = combo
+            }
         }
 
-        if (possibilities.values.any { it.size != 1 }) {
-            throw Exception("Something bad happened")
+        // c maps to this character
+        val c = results[0]!!.toList().filter { !results[6]!!.contains(it) }.joinToString("")
+        val e = results[0]!!.toList().filter { !results[9]!!.contains(it) }.joinToString("")
+
+        combos.filter { it.length == 5 }.forEach { combo ->
+            if (!combo.contains(c)) {
+                results[5] = combo
+            } else if (combo.contains(e)){
+                results[2] = combo
+            } else results[3] = combo
         }
+
+        val number = outputs.reversed().mapIndexed { index, s ->
+            10.0.pow(index) * results.filter { it.value == s }.keys.first()
+        }.sum()
+
+        number.toInt()
     }
 }

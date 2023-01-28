@@ -11,7 +11,6 @@ object Main2021 {
         p2Sample(day, clazz)
         p2Real(day, clazz)
         println()
-
     }
 
     fun runAll() = (1..25).forEach(::run)
