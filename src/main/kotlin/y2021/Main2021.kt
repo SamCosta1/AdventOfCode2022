@@ -8,8 +8,8 @@ object Main2021 {
     fun run(day: Int) = Class.forName("y2021.day$day.Main").also { clazz ->
         p1Sample(day, clazz)
         p1Real(day, clazz)
-        p2Sample(day, clazz)
-        p2Real(day, clazz)
+//        p2Sample(day, clazz)
+//        p2Real(day, clazz)
         println()
     }
 
