@@ -37,9 +37,7 @@ class Main: Puzzle {
             val adjacentOctopus = grid.points[it]
             adjacentOctopus!!.energy++
 
-            if (!alreadyFlashed.contains(it)) {
-                simulate(it, grid, alreadyFlashed)
-            }
+            simulate(it, grid, alreadyFlashed)
         }
     }
 
