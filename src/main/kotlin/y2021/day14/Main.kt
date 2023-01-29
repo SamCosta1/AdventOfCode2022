@@ -16,14 +16,14 @@ class Main : Puzzle {
             currentState = buildString {
                 while (index < currentState.length) {
                     val thisPair = "${currentState[index - 1]}${currentState[index]}"
-                    val mapping = data.mappings.firstOrNull { it.source == thisPair }?.dest ?: ""
+                    val mapping = data.mappings.get(thisPair) ?: ""
                     append(currentState[index - 1])
                     append(mapping)
                     index++
                 }
                 append(currentState.last())
             }
-            println("Step complete $step")
+            println("Step complete $step ${currentState.length}")
         }
 
         val counts = currentState.toSet().map { char ->
