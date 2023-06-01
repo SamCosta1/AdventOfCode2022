@@ -3,8 +3,6 @@ package y2021.day15
 import utils.Puzzle
 import utils.RunMode
 import utils.Point
-import y2022.day16.Room
-import kotlin.math.max
 
 class Main : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { grid ->
@@ -13,22 +11,26 @@ class Main : Puzzle {
 
     private fun runAlgo(grid: Grid): Long {
         val startPoint = Point(0, 0)
+        val end = Point(grid.width - 1L, grid.height - 1L)
+
         val dist = grid.points.mapValues { if (it.key == startPoint) 0L else Long.MAX_VALUE - 1 }.toMutableMap()
         val q = grid.points.keys.toMutableList()
 
         while (q.isNotEmpty()) {
-            val next = q.minBy { dist[it]!! }!!
+            val current = q.minBy { dist[it]!! }!!
 
-            q.remove(next)
+            q.remove(current)
 
-            grid.adjacentNodes(next.x, next.y).forEach {
-                if (dist[next]!! + grid.points[it]!! < dist[it]!!) {
-                    dist[it] = dist[next]!! + grid.points[it]!!
+            grid.adjacentNodes(current.x, current.y).forEach {
+                if (dist[current]!! + grid.points[it]!! < dist[it]!!) {
+                    dist[it] = dist[current]!! + grid.points[it]!!
+
                 }
             }
         }
 
-        return dist[Point(grid.width - 1L, grid.height - 1L)]!!
+
+        return dist[end]!!
     }
 
     val repeats = 5
@@ -48,11 +50,6 @@ class Main : Puzzle {
                 }
             }
         }
-
-//        println("s")
-//        var a = 0
-//        (0..62500000_000).forEach { a++ }
-//        println("b")
 
     }.let { grid ->
         runAlgo(grid)
