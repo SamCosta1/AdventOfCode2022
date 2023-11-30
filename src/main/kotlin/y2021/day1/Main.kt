@@ -3,7 +3,7 @@ package y2021.day1
 import utils.Puzzle
 import utils.RunMode
 
-class Main: Puzzle {
+class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = data.map { it.toInt() }.let { measurments ->
         (1..measurments.lastIndex).count { index ->
             measurments[index] > measurments[index - 1]

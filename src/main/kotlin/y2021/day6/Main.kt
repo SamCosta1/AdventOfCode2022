@@ -3,7 +3,7 @@ package y2021.day6
 import utils.Puzzle
 import utils.RunMode
 
-class Main : Puzzle {
+class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
 
     private fun runSimulation(totalDays: Int, fishes: List<Int>): Long {
         return fishes.sumOf { dayOfFirstChild ->

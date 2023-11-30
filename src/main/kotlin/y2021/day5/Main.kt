@@ -7,7 +7,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
 
-class Main : Puzzle {
+class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
     private fun String.parse() = split(" -> ").map { raw ->
         raw.split(",").map {
             it.toLong()

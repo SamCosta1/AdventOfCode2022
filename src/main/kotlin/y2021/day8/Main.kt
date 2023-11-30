@@ -5,7 +5,7 @@ import utils.RunMode
 import java.lang.Exception
 import kotlin.math.pow
 
-class Main : Puzzle {
+class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
 
     val zero = listOf("a", "b", "c", "e", "f", "g")
     val one = listOf("c", "f")

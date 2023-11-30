@@ -4,7 +4,7 @@ import utils.Point
 import utils.Puzzle
 import utils.RunMode
 
-class Main : Puzzle {
+class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { parsed ->
         performInstructions(parsed.points, parsed.instructions.take(1)).size
     }

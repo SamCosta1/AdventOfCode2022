@@ -20,6 +20,18 @@ internal fun runTimed(repeats: Int = 1, block: () -> Any): String {
     return "Average time ${String.format("%05d", time / repeats)}ms | $answer "
 }
 
+fun Long.formatTimeMs() = "${String.format("%05d", this)}ms"
+ fun runTimedNew(repeats: Int = 1, block: () -> Any): Pair<Any?, Long> {
+    var answer: Any? = null
+    val time = measureTimeMillis {
+        repeat(repeats) {
+            answer = block()
+        }
+    }
+
+    return Pair(answer, time)
+}
+
 fun Int.debug() = String.format("%02d", this)
 fun Long.debug() = String.format("%02d", this)
 

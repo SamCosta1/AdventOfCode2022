@@ -4,7 +4,7 @@ import utils.Puzzle
 import utils.RunMode
 import java.lang.StringBuilder
 
-class Main : Puzzle {
+class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = data.sumOf { line ->
         val res = runCatching { createChunks(line) }
         val e = res.exceptionOrNull() as? CorruptException ?: res.exceptionOrNull()?.let { throw it }
