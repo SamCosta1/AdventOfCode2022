@@ -45,7 +45,7 @@ object Parser {
 }
 
 public inline fun <T> Iterable<T>.productOf(selector: (T) -> Int): Int {
-    var product: Int = 0.toInt()
+    var product: Int = 1.toInt()
     for (element in this) {
         product *= selector(element)
     }
