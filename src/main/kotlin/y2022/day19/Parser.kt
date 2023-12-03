@@ -51,3 +51,11 @@ public inline fun <T> Iterable<T>.productOf(selector: (T) -> Int): Int {
     }
     return product
 }
+
+public inline fun <T> Iterable<T>.productOfLong(selector: (T) -> Long): Long {
+    var product = 1L
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}

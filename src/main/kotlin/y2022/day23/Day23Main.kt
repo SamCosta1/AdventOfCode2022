@@ -100,7 +100,7 @@ class Day23Main(val file: String) {
     }
 }
 
-private fun Point.adjacentPoints() = listOf(
+ fun Point.adjacentPoints() = listOf(
     Point(x - 1, y - 1),
     Point(x - 1, y),
     Point(x - 1, y + 1),

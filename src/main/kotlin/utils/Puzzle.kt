@@ -76,7 +76,7 @@ private fun readSample(part: Int, day: Int, year: Int): List<String> {
 private fun runSample(time: Long, result: Any?, expectedResult: Any) = if (result == expectedResult) {
     Pair(true, " ✅: $result\t(${time.formatTimeMs()})")
 } else {
-    Pair(false, " ❌: $result\t(${time.formatTimeMs()})")
+    Pair(false, " ❌: $result\t(${time.formatTimeMs()}) [Expected Result = expectedResult]")
 }
 
 private fun read(path: String) = Files.readAllLines(
