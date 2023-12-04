@@ -4,6 +4,7 @@ object Parser {
 
     data class Card(val cardNumber: Int, val id: String, val winning: List<Long>, val cardNumbers: Set<Long>) {
         val numMatches = cardNumbers.intersect(winning.toSet()).size
+        val indexInList = cardNumber -1
     }
 
     fun parse(data: List<String>) = data.map { row ->

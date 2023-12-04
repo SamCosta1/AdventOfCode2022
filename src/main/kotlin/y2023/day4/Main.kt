@@ -8,7 +8,7 @@ import kotlin.math.pow
 class Main(
     override val part1ExpectedAnswerForSample: Any,
     override val part2ExpectedAnswerForSample: Any
-): Puzzle {
+) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).sumOf { card ->
         if (card.numMatches == 0) {
             0L
@@ -16,17 +16,17 @@ class Main(
             2.0.pow(card.numMatches - 1.0).toLong()
         }
     }
-    override fun runPart2(data: List<String>, runMode: RunMode): Any {
-        val cards = LinkedList(Parser.parse(data))
 
-        var index = 0
-        while (index < cards.size) {
-            val card = cards[index]
-            repeat(card.numMatches) {
-                cards.add(cards[card.cardNumber + it])
-            }
-            index++
+    override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { cards ->
+        cards.sumOf { totalSpawnedPlusIt(cards, it) }
+    }
+
+    private val cache = mutableMapOf<Parser.Card, Long>()
+    private fun totalSpawnedPlusIt(cards: List<Parser.Card>, card: Parser.Card): Long {
+        return cache.getOrPut(card) {
+            (1..card.numMatches).sumOf {
+                totalSpawnedPlusIt(cards, cards[card.indexInList + it])
+            } + 1
         }
-        return cards.size.toLong()
     }
 }
