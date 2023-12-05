@@ -12,7 +12,7 @@ object Main2023 {
         y2023.day2.Main(8, 2286),
         y2023.day3.Main(4361L, 467835L),
         y2023.day4.Main(13L, 30L),
-        y2023.day5.Main(NotStarted, NotStarted),
+        y2023.day5.Main(35L, 46L),
         y2023.day6.Main(NotStarted, NotStarted),
         y2023.day7.Main(NotStarted, NotStarted),
         y2023.day8.Main(NotStarted, NotStarted),
