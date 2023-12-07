@@ -14,6 +14,9 @@ object Parser {
         val type = cards.type()
         val sortedCards = cards.sorted()
         val pretty = "$raw $bidAmount"
+
+        val part2Type = cards.part2Type()
+        val part2Values = cards.map { if (it == charToValue('J')) 1 else it }
     }
 
     fun parse(data: List<String>) = data.map { row ->
@@ -21,17 +24,19 @@ object Parser {
         Hand(
             bidAmount = split.last().toLong(),
             cards =   split.first().map {
-                when(it) {
-                    'T' -> 10
-                    'J' -> 11
-                    'Q' -> 12
-                    'K' -> 13
-                    'A' -> 14
-                    else -> it.toString().toInt()
-                }
+                charToValue(it)
             },
             raw = split.first()
         )
+    }
+
+    private fun charToValue(it: Char) = when (it) {
+        'T' -> 10
+        'J' -> 11
+        'Q' -> 12
+        'K' -> 13
+        'A' -> 14
+        else -> it.toString().toInt()
     }
 
     fun List<Int>.type(): Hand.Type {
@@ -47,5 +52,20 @@ object Parser {
             groups.size == 5 -> Hand.Type.HighCard
             else -> throw Exception("Something broke $this")
         }
+    }
+
+    val jValue = charToValue('J')
+    fun List<Int>.part2Type(): Hand.Type {
+        val groups = groupingBy { it }.eachCount()
+
+        val mostFrequent = groups.filter { it.key != jValue}.maxByOrNull { it.value }?.key ?: return Hand.Type.FiveOAK
+        val newList = map {
+            if (it == jValue) {
+                mostFrequent
+            } else {
+                it
+            }
+        }
+        return newList.type()
     }
 }
