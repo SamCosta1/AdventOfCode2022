@@ -15,6 +15,9 @@ object Parser  {
             return "$label = (${left?.label}, ${right?.label})"
         }
 
+        override fun hashCode(): Int {
+            return label.hashCode()
+        }
         fun linkFor(instruction: Instruction): Node {
             return when(instruction) {
                 Instruction.Left -> left!!
