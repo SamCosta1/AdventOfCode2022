@@ -1,5 +1,8 @@
 package y2023.day5
 
+import java.lang.Long.max
+import kotlin.math.min
+
 object Parser {
     data class Info(
         val seeds: List<Long>,
@@ -10,17 +13,16 @@ object Parser {
         val lightToTemp: SourceToDestinationMap,
         val tempToHum: SourceToDestinationMap,
         val humToLocation: SourceToDestinationMap,
-    )
-
-    sealed class Category(open val number: Long) {
-        data class Seed(override val number: Long) : Category(number)
-        data class Soil(override val number: Long) : Category(number)
-        data class Fertilizer(override val number: Long) : Category(number)
-        data class Water(override val number: Long) : Category(number)
-        data class Light(override val number: Long) : Category(number)
-        data class Temperature(override val number: Long) : Category(number)
-        data class Humidity(override val number: Long) : Category(number)
-        data class Location(override val number: Long) : Category(number)
+    ) {
+        val orderedMaps = listOf(
+            seedToSoil,
+            soilToFert,
+            fertToWater,
+            waterToLight,
+            lightToTemp,
+            tempToHum,
+            humToLocation,
+        )
     }
 
     data class SourceToDestinationMap(
@@ -40,6 +42,57 @@ object Parser {
 
             return source
         }
+
+        operator fun invoke(source: List<LongRange>): List<LongRange> {
+            return source.map { invoke(it) }.flatten()
+        }
+
+        operator fun invoke(source: LongRange): List<LongRange> {
+            val result = mutableListOf<LongRange>()
+            var currentRange = source
+
+
+            for (map in sortedMaps) {
+                println("map ${map.sourceStart}..${map.sourceEnd} current $currentRange")
+                if (currentRange.first < map.sourceStart) {
+                    result += (currentRange.first..min(currentRange.last, map.sourceStart - 1))
+                }
+                if (currentRange.last < map.sourceStart) {
+                    break
+                }
+                if (currentRange.start > map.sourceEnd) {
+                    continue
+                }
+
+                println("result1 $result")
+                val endOfWhatThisMapCanHandle = min(currentRange.last, map.sourceEnd)
+                result += (map.map(max(currentRange.first, map.sourceStart))..map.map(endOfWhatThisMapCanHandle))
+                println("result2 $result")
+
+                currentRange = ((endOfWhatThisMapCanHandle + 1)..currentRange.last)
+
+                if (currentRange.isEmpty()) {
+                    break
+                }
+            }
+
+            if (currentRange.first > sortedMaps.last().sourceEnd) {
+                result += ((sortedMaps.last().sourceEnd + 1)..currentRange.first)
+            }
+
+            println("Source $source result $result")
+            return result.filter { !it.isEmpty() }
+//            val mapContainingSourceStart = sortedMaps.firstOrNull { it.isInRange(source.first) }
+//
+//            if (mapContainingSourceStart == null) {
+//                val mapBiggerThanSource = sortedMaps.firstOrNull {
+//                    it.sourceStart >= source.first
+//                }?.takeIf { it.isInRange(source.first) } ?: return listOf(source)
+//
+//                result += (source.first..min(source.last, mapBiggerThanSource.sourceEnd))
+//            }
+
+        }
     }
 
     data class SourceToDestinationMapItem(
@@ -48,7 +101,7 @@ object Parser {
         private val rangeLength: Long
     ) {
         val sourceEnd = sourceStart + rangeLength
-        fun isInRange(source: Long) = source in sourceStart..(sourceStart + rangeLength)
+        fun isInRange(source: Long) = source in sourceStart until sourceStart + rangeLength
 
         fun map(source: Long): Long {
             return destStart + source - sourceStart
@@ -74,11 +127,11 @@ object Parser {
         data.take(
             data.indexOfFirst { it.isBlank() }.takeUnless { it < 0 } ?: data.size
         ).map { row ->
-                val (dest, source, range) = row.split(" ").map { it.toLong() }
-                SourceToDestinationMapItem(
-                    sourceStart = source,
-                    destStart = dest,
-                    rangeLength = range
-                )
-            }.sortedBy { it.sourceStart })
+            val (dest, source, range) = row.split(" ").map { it.toLong() }
+            SourceToDestinationMapItem(
+                sourceStart = source,
+                destStart = dest,
+                rangeLength = range
+            )
+        }.sortedBy { it.sourceStart })
 }

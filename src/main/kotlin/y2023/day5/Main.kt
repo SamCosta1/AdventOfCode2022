@@ -13,23 +13,17 @@ class Main(
         }
     }
 
-    private fun seedToSoil(seed: Long, info: Parser.Info) = info.seedToSoil(seed)
-        .let { info.soilToFert(it) }//.also { println("soilToFert  $it")}
-        .let { info.fertToWater(it) }//.also { println("fertToWater  $it")}
-        .let { info.waterToLight(it) }//.also { println("waterToLight  $it")}
-        .let { info.lightToTemp(it) }//.also { println("lightToTemp  $it")}
-        .let { info.tempToHum(it) }//.also { println("tempToHum  $it")}
-        .let { info.humToLocation(it) }//.also { println("humToLocation  $it")}
+    private fun seedToSoil(seed: Long, info: Parser.Info) = info.orderedMaps.fold(seed) { acc, current ->
+        current(acc)
+    }
+
+    private fun seedToSoil(seeds: List<LongRange>, info: Parser.Info): List<LongRange> = info.orderedMaps.fold(seeds) { acc, current ->
+        current(acc.sortedBy { it.first })
+    }
 
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
-
-        info.seeds.chunked(2).map {
+        seedToSoil(info.seeds.chunked(2).map {
             (it.first() until it.first() + it.last())
-        }.minOf {
-            it.minOf { seed ->
-                seedToSoil(seed, info)
-            }
-        }
-
+        }, info).minOf { it.first }
     }
 }

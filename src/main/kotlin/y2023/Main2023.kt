@@ -15,7 +15,7 @@ object Main2023 {
         y2023.day5.Main(35L, 46L),
         y2023.day6.Main(288, 71503),
         y2023.day7.Main(6440L, 5905L),
-        y2023.day8.Main(NotStarted, NotStarted),
+        y2023.day8.Main(6L, NotStarted),
         y2023.day9.Main(NotStarted, NotStarted),
         y2023.day10.Main(NotStarted, NotStarted),
         y2023.day11.Main(NotStarted, NotStarted),
@@ -47,4 +47,6 @@ object Main2023 {
     fun runLatest() = puzzles.indexOfLast { it.part1ExpectedAnswerForSample != NotStarted }.let {
         puzzles[it].run(it + 1, 2023)
     }
+
+    fun run(day: Int) = puzzles[day - 1].run(day, 2023)
 }

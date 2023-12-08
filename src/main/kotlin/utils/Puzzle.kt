@@ -6,7 +6,8 @@ import java.nio.file.Paths
 
 object NotStarted
 
-interface Puzzle {
+interface
+Puzzle {
     val part1ExpectedAnswerForSample: Any
     val part2ExpectedAnswerForSample: Any
     fun runPart1(data: List<String>, runMode: RunMode): Any
@@ -35,7 +36,7 @@ fun Puzzle.run(day: Int, year: Int) {
         if (sampleCorrect) {
             println("       Real     : ${
                 runTimedNew {
-                    runPart1(real, RunMode.Sample)
+                    runPart1(real, RunMode.Real)
                 }.let { "${it.first}\t(${it.second.formatTimeMs()})\"" }
             }")
         }
@@ -57,7 +58,7 @@ fun Puzzle.run(day: Int, year: Int) {
         if (sampleCorrect) {
             println("       Real     : ${
                 runTimedNew {
-                    runPart2(real, RunMode.Sample)
+                    runPart2(real, RunMode.Real)
                 }.let { "${it.first}\t(${it.second.formatTimeMs()})\"" }
             }")
         }

@@ -11,7 +11,7 @@ object Parser {
             OnePair,
             HighCard
         }
-        val type = cards.type()
+        val type = cards.part1Type()
         val sortedCards = cards.sorted()
         val pretty = "$raw $bidAmount"
 
@@ -39,7 +39,7 @@ object Parser {
         else -> it.toString().toInt()
     }
 
-    fun List<Int>.type(): Hand.Type {
+    fun List<Int>.part1Type(): Hand.Type {
         val groups = groupingBy { it }.eachCount()
 
         return when {
@@ -58,7 +58,10 @@ object Parser {
     fun List<Int>.part2Type(): Hand.Type {
         val groups = groupingBy { it }.eachCount()
 
-        val mostFrequent = groups.filter { it.key != jValue}.maxByOrNull { it.value }?.key ?: return Hand.Type.FiveOAK
+        val mostFrequent = groups.filter {
+            it.key != jValue
+        }.maxByOrNull { it.value }?.key ?: return Hand.Type.FiveOAK
+
         val newList = map {
             if (it == jValue) {
                 mostFrequent
@@ -66,6 +69,6 @@ object Parser {
                 it
             }
         }
-        return newList.type()
+        return newList.part1Type()
     }
 }
