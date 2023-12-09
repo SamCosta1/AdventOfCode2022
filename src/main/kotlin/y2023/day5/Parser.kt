@@ -44,56 +44,61 @@ object Parser {
         }
 
         operator fun invoke(source: List<LongRange>): List<LongRange> {
-            return source.map { invoke(it) }.flatten()
+            return source.map { invoke(it) }.flatten().toSet().toList()
         }
 
         operator fun invoke(source: LongRange): List<LongRange> {
             val result = mutableListOf<LongRange>()
             var currentRange = source
 
-
-            for (map in sortedMaps) {
-                println("map ${map.sourceStart}..${map.sourceEnd} current $currentRange")
-                if (currentRange.first < map.sourceStart) {
-                    result += (currentRange.first..min(currentRange.last, map.sourceStart - 1))
+            val addResult = { range: LongRange ->
+                if (!range.isEmpty()) {
+                    result += range
                 }
-                if (currentRange.last < map.sourceStart) {
-                    break
-                }
-                if (currentRange.start > map.sourceEnd) {
-                    continue
-                }
+            }
 
-                println("result1 $result")
-                val endOfWhatThisMapCanHandle = min(currentRange.last, map.sourceEnd)
-                result += (map.map(max(currentRange.first, map.sourceStart))..map.map(endOfWhatThisMapCanHandle))
-                println("result2 $result")
-
-                currentRange = ((endOfWhatThisMapCanHandle + 1)..currentRange.last)
-
+            val log = { str: String ->
+//                println(str)
+            }
+            log("--------")
+            log("Source $source")
+            for ((index, map) in sortedMaps.withIndex()) {
                 if (currentRange.isEmpty()) {
                     break
                 }
+                // Add the bit before this map
+                addResult(source.coerceAtMost(map.sourceStart-1))
+
+                if (currentRange.last < map.sourceStart) {
+                    break
+                }
+                log("Considering map: $map")
+                log("added before ${result.lastOrNull()}")
+                // Add the bit that overlaps this map
+                val overlapping = currentRange.coerceAtLeast(map.sourceStart).coerceAtMost(map.sourceEnd -1)
+                log("overlapping $overlapping")
+                addResult(map.map(overlapping.first)..map.map(overlapping.last))
+
+                currentRange = currentRange.coerceAtLeast(map.sourceEnd)
+                log("current range now $currentRange  result ${result.filter { !it.isEmpty() }}")
             }
 
-            if (currentRange.first > sortedMaps.last().sourceEnd) {
-                result += ((sortedMaps.last().sourceEnd + 1)..currentRange.first)
+            /*
+            919339981..919339990
+            675869083->1007717708
+
+
+             */
+            addResult(currentRange)
+            return result.filter { !it.isEmpty() }.also {
+                log("result $it")
+                log("--------")
             }
-
-            println("Source $source result $result")
-            return result.filter { !it.isEmpty() }
-//            val mapContainingSourceStart = sortedMaps.firstOrNull { it.isInRange(source.first) }
-//
-//            if (mapContainingSourceStart == null) {
-//                val mapBiggerThanSource = sortedMaps.firstOrNull {
-//                    it.sourceStart >= source.first
-//                }?.takeIf { it.isInRange(source.first) } ?: return listOf(source)
-//
-//                result += (source.first..min(source.last, mapBiggerThanSource.sourceEnd))
-//            }
-
         }
     }
+
+    private fun LongRange.coerceAtMost(value: Long) = (first..min(last, value))
+    private fun LongRange.coerceAtLeast(value: Long) = (max(first, value)..last)
 
     data class SourceToDestinationMapItem(
         val sourceStart: Long,
@@ -105,6 +110,10 @@ object Parser {
 
         fun map(source: Long): Long {
             return destStart + source - sourceStart
+        }
+
+        override fun toString(): String {
+            return "$sourceStart->$sourceEnd : $destStart -> ${map(sourceEnd)}"
         }
     }
 
