@@ -22,16 +22,10 @@ class Main(
     }
 
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
-
-        info.seeds.chunked(2).map {
+        info.seeds.asSequence().chunked(2).map {
             (it.first() until  it.first() + it.last())
         }.map { range ->
-            println(range)
-            seedToSoil(listOf(range), info).also {
-                if (it.any { it.first == 0L }) {
-                    println("Range $range gives a 0")
-                }
-            }
-        }.flatten().also { println(it) }.minOf { it.first }
+            seedToSoil(listOf(range), info)
+        }.flatten().minOf { it.first }
     }
 }

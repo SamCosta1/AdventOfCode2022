@@ -67,7 +67,7 @@ object Parser {
                     break
                 }
                 // Add the bit before this map
-                addResult(source.coerceAtMost(map.sourceStart-1))
+                addResult(currentRange.coerceAtMost(map.sourceStart-1))
 
                 if (currentRange.last < map.sourceStart) {
                     break
@@ -83,12 +83,6 @@ object Parser {
                 log("current range now $currentRange  result ${result.filter { !it.isEmpty() }}")
             }
 
-            /*
-            919339981..919339990
-            675869083->1007717708
-
-
-             */
             addResult(currentRange)
             return result.filter { !it.isEmpty() }.also {
                 log("result $it")

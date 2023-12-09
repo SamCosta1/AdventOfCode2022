@@ -37,7 +37,7 @@ fun Puzzle.run(day: Int, year: Int) {
             println("       Real     : ${
                 runTimedNew {
                     runPart1(real, RunMode.Real)
-                }.let { "${it.first}\t(${it.second.formatTimeMs()})\"" }
+                }.let { "(${it.second.formatTimeMs()}) | ${it.first}" }
             }")
         }
     }
@@ -59,7 +59,7 @@ fun Puzzle.run(day: Int, year: Int) {
             println("       Real     : ${
                 runTimedNew {
                     runPart2(real, RunMode.Real)
-                }.let { "${it.first}\t(${it.second.formatTimeMs()})\"" }
+                }.let { "(${it.second.formatTimeMs()}) | ${it.first}" }
             }")
         }
     }
@@ -75,9 +75,9 @@ private fun readSample(part: Int, day: Int, year: Int): List<String> {
     }!!
 }
 private fun runSample(time: Long, result: Any?, expectedResult: Any) = if (result == expectedResult) {
-    Pair(true, " ✅: $result\t(${time.formatTimeMs()})")
+    Pair(true, " ✅: (${time.formatTimeMs()}) | $result")
 } else {
-    Pair(false, " ❌: $result\t(${time.formatTimeMs()}) [Expected Result = $expectedResult]")
+    Pair(false, " ❌: (${time.formatTimeMs()}) | $result\t[Expected Result = $expectedResult]")
 }
 
 private fun read(path: String) = Files.readAllLines(
