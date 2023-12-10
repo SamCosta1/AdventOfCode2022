@@ -5,7 +5,8 @@ import utils.RunMode
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 114L,
-    override val part2ExpectedAnswerForSample: Any = 2L
+    override val part2ExpectedAnswerForSample: Any = 2L,
+    override val isComplete: Boolean = true
 ): Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any = data.map { row ->
         row.split(" ").map { it.toLong() }

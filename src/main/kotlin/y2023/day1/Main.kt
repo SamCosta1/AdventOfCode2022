@@ -5,7 +5,8 @@ import utils.RunMode
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 142,
-    override val part2ExpectedAnswerForSample: Any = 281
+    override val part2ExpectedAnswerForSample: Any = 281,
+    override val isComplete: Boolean = true
 ): Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any = data.sumOf { row ->
         val first = row.first { it.toString().toIntOrNull() != null }.toString()

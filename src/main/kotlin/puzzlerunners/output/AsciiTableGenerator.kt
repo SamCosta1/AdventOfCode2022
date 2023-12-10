@@ -2,10 +2,13 @@ package puzzlerunners.output
 
 import com.jakewharton.picnic.TextAlignment
 import com.jakewharton.picnic.table
+import puzzlerunners.DayResults
+import puzzlerunners.ExecutionResult
+import puzzlerunners.NotStarted
 import puzzlerunners.YearResults
 
 object AsciiTableGenerator {
-    fun format(yearResults: YearResults) = table {
+    fun formatInProgress(yearResults: YearResults) = table {
         cellStyle {
             border = true
             paddingLeft = 1
@@ -27,7 +30,7 @@ object AsciiTableGenerator {
                 cell("Total Time: ") {
                     columnSpan = 4
                 }
-                cells("${yearResults.runTime}ms")
+                cells(ExecutionResult.decimalFormatter.format(yearResults.runTime / 1000_000) + "ms")
             }
         }
 
@@ -39,10 +42,10 @@ object AsciiTableGenerator {
                 cell("1") {
                     rowSpan = 2
                 }
-                cells("Sample", dayResults.part1Sample.solution, dayResults.part1Sample.runtime?.let { "${it}ms" })
+                cells("Sample", dayResults.part1Sample.solution, dayResults.part1Sample.formatRuntime())
             }
 
-            row("Real", dayResults.part1Real?.solution ?: "", dayResults.part1Real?.runtime?.let { "${it}ms" } ?: "")
+            row("Real", dayResults.part1Real?.solution ?: "", dayResults.part1Real?.formatRuntime() ?: "")
 
             row {
                 cell("2") {
@@ -51,10 +54,76 @@ object AsciiTableGenerator {
                 cells(
                     "Sample",
                     dayResults.part2Sample?.solution ?: "",
-                    dayResults.part2Sample?.runtime?.let { "${it}ms" } ?: "")
+                    dayResults.part2Sample?.formatRuntime() ?: ""
+                )
             }
-            row("Real", dayResults.part2Real?.solution ?: "", dayResults.part2Real?.runtime?.let { "${it}ms" } ?: "")
+            row("Real", dayResults.part2Real?.solution ?: "", dayResults.part2Real?.formatRuntime() ?: "")
         }
 
+    }
+
+    fun formatInProgress(dayResult: DayResults) = table {
+        cellStyle {
+            border = true
+            paddingLeft = 1
+            paddingRight = 1
+        }
+
+        header {
+            row {
+                cell("Day ${dayResult.day}/${dayResult.year}") {
+                    columnSpan = 4
+                    alignment = TextAlignment.MiddleCenter
+                }
+            }
+            row("Part", "Mode", "Answer", "Time", "")
+        }
+
+        row {
+            cell("1") {
+                rowSpan = 2
+            }
+            cells(
+                "Sample",
+                dayResult.part1Sample.solution,
+                dayResult.part1Sample.formatRuntime(),
+                if (dayResult.part1Sample.solution == dayResult.puzzle.part1ExpectedAnswerForSample) {
+                    " ✅ "
+                } else {
+                    "❌ [Expected Result = ${dayResult.puzzle.part1ExpectedAnswerForSample}]"
+                }
+            )
+        }
+
+        row("Real", dayResult.part1Real?.solution ?: "", dayResult.part1Real?.formatRuntime() ?: "")
+
+        if (dayResult.puzzle.part2ExpectedAnswerForSample != NotStarted) {
+            row {
+                cell("2") {
+                    rowSpan = 2
+                }
+                cells(
+                    "Sample",
+                    dayResult.part2Sample?.solution,
+                    dayResult.part2Sample?.formatRuntime(),
+                    if (dayResult.part2Sample?.solution == dayResult.puzzle.part2ExpectedAnswerForSample) {
+                        "✅"
+                    } else {
+                        "❌ [Expected Result = ${dayResult.puzzle.part2ExpectedAnswerForSample}]"
+                    }
+                )
+            }
+            row("Real", dayResult.part2Real?.solution ?: "", dayResult.part2Real?.formatRuntime() ?: "")
+        }
+
+
+        footer {
+            row {
+                cell("Total Time: ") {
+                    columnSpan = 3
+                }
+                cells(ExecutionResult.decimalFormatter.format(dayResult.totalRuntime / 1000_000) + "ms")
+            }
+        }
     }
 }

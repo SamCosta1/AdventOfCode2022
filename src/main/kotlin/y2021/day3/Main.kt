@@ -4,7 +4,11 @@ import utils.BinaryUtils
 import puzzlerunners.Puzzle
 import utils.RunMode
 
-class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
+class Main(
+    override val part1ExpectedAnswerForSample: Any,
+    override val part2ExpectedAnswerForSample: Any,
+    override val isComplete: Boolean = true
+) : Puzzle {
     data class MostAndLeastCommon(val most: List<Int>, val least: List<Int>)
     private fun List<List<Int>>.mostAndLeastCommon(): MostAndLeastCommon {
         val onesCount = IntArray(first().count()) { 0 }

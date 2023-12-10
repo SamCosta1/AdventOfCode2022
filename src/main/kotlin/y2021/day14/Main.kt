@@ -4,7 +4,11 @@ import puzzlerunners.Puzzle
 import utils.RunMode
 
 typealias SubResult = Map<Char, Long>
-class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
+class Main(
+    override val part1ExpectedAnswerForSample: Any,
+    override val part2ExpectedAnswerForSample: Any,
+    override val isComplete: Boolean = true
+) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = runMoreIntelligent(Parser.parse(data), repeats = 10)
     override fun runPart2(data: List<String>, runMode: RunMode) = runMoreIntelligent(Parser.parse(data), repeats = 40)
 

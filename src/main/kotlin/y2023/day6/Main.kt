@@ -6,7 +6,8 @@ import y2022.day19.productOf
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 288,
-    override val part2ExpectedAnswerForSample: Any = 71503
+    override val part2ExpectedAnswerForSample: Any = 71503,
+    override val isComplete: Boolean = true
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).productOf {
         it.numberOfWaysToWin()

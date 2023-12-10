@@ -5,7 +5,8 @@ import utils.RunMode
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 6L,
-    override val part2ExpectedAnswerForSample: Any = 6L
+    override val part2ExpectedAnswerForSample: Any = 6L,
+    override val isComplete: Boolean = true
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
         val endNode = info.nodes["ZZZ"]!!

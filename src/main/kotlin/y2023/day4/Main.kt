@@ -6,7 +6,8 @@ import kotlin.math.pow
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 13L,
-    override val part2ExpectedAnswerForSample: Any = 30L
+    override val part2ExpectedAnswerForSample: Any = 30L,
+    override val isComplete: Boolean = true
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).sumOf { card ->
         if (card.numMatches == 0) {

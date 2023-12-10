@@ -6,12 +6,14 @@ import utils.runTimedNew
 import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.text.DecimalFormat
 
 object NotStarted
 
 interface Puzzle {
     val part1ExpectedAnswerForSample: Any
     val part2ExpectedAnswerForSample: Any
+    val isComplete: Boolean
     fun runPart1(data: List<String>, runMode: RunMode): Any
     fun runPart2(data: List<String>, runMode: RunMode): Any
 }
@@ -27,11 +29,21 @@ data class DayResults(
     val part1Real: ExecutionResult? = null,
     val part2Sample: ExecutionResult? = null,
     val part2Real: ExecutionResult? = null,
-    val day: Int
+    val day: Int,
+    val year: Int,
+    val puzzle: Puzzle
 ) {
     val isComplete = part1Real != null && part2Sample != null && part2Real != null
+    val totalRuntime get() = listOfNotNull(
+        part1Sample,part1Real,part2Sample,part2Real
+    ).sumOf { it.runtime }
 }
-data class ExecutionResult(val solution: Any?, val runtime: Long)
+data class ExecutionResult(val solution: Any?, val runtime: Long) {
+    fun formatRuntime(): String = decimalFormatter.format(runtime / 1000_000.0) + "ms"
+    companion object {
+        val decimalFormatter = DecimalFormat("#.###");
+    }
+}
 
 fun Puzzle.run(day: Int, year: Int): DayResults {
     val sample1 = readSample(1, day, year)
@@ -57,58 +69,14 @@ fun Puzzle.run(day: Int, year: Int): DayResults {
     }
     return DayResults(
         day = day,
+        puzzle = this,
         part1Sample = part1Sample,
         part1Real = part1Real,
         part2Sample = part2Sample,
-        part2Real = part2Real
+        part2Real = part2Real,
+        year = year
     )
 }
-/*
-    if (part1ExpectedAnswerForSample != NotStarted) {
-        var sampleCorrect = false
-        println("Day $day")
-        println("   Part 1")
-        println(
-            "       Sample${
-                runTimedNew { runPart1(sample1, RunMode.Sample) }.let {
-                    runSample(it.second, it.first, part1ExpectedAnswerForSample).let { result ->
-                        sampleCorrect = result.first
-                        result.second
-                    }
-                }
-            }"
-        )
-        if (sampleCorrect) {
-            println("       Real     : ${
-                runTimedNew {
-                    runPart1(real, RunMode.Real)
-                }.let { "(${it.second.formatTimeMs()}) | ${it.first}" }
-            }")
-        }
-    }
-
-    if (part2ExpectedAnswerForSample != NotStarted) {
-        var sampleCorrect = false
-        println("   Part 2")
-        println(
-            "       Sample${
-                runTimedNew { runPart2(sample2, RunMode.Sample) }.let {
-                    runSample(it.second, it.first, part2ExpectedAnswerForSample).let { result ->
-                        sampleCorrect = result.first
-                        result.second
-                    }
-                }
-            }"
-        )
-        if (sampleCorrect) {
-            println("       Real     : ${
-                runTimedNew {
-                    runPart2(real, RunMode.Real)
-                }.let { "(${it.second.formatTimeMs()}) | ${it.first}" }
-            }")
-        }
-    }
-}*/
 
 private fun readSample(part: Int, day: Int, year: Int): List<String> {
     if (part == 1) return read("src/main/kotlin/y$year/day$day/sample.txt")
@@ -118,11 +86,6 @@ private fun readSample(part: Int, day: Int, year: Int): List<String> {
     } catch (e: Exception) {
         read("src/main/kotlin/y$year/day$day/sample.txt")
     }!!
-}
-private fun runSample(time: Long, result: Any?, expectedResult: Any) = if (result == expectedResult) {
-    Pair(true, " ✅: (${time.formatTimeMs()}) | $result")
-} else {
-    Pair(false, " ❌: (${time.formatTimeMs()}) | $result\t[Expected Result = $expectedResult]")
 }
 
 private fun read(path: String) = Files.readAllLines(

@@ -5,7 +5,11 @@ import puzzlerunners.Puzzle
 import utils.RunMode
 import kotlin.math.sign
 
-class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
+class Main(
+    override val part1ExpectedAnswerForSample: Any,
+    override val part2ExpectedAnswerForSample: Any,
+    override val isComplete: Boolean = true
+) : Puzzle {
     private fun String.parse() = split(" -> ").map { raw ->
         raw.split(",").map {
             it.toLong()

@@ -7,7 +7,8 @@ import kotlin.math.max
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 8,
-    override val part2ExpectedAnswerForSample: Any = 2286
+    override val part2ExpectedAnswerForSample: Any = 2286,
+    override val isComplete: Boolean = true
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any = Parser.parse(data).let { games ->
         val initialCounts = mapOf("red" to 12, "green" to 13, "blue" to 14)

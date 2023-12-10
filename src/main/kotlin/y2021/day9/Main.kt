@@ -4,7 +4,11 @@ import utils.Point
 import puzzlerunners.Puzzle
 import utils.RunMode
 
-class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
+class Main(
+    override val part1ExpectedAnswerForSample: Any,
+    override val part2ExpectedAnswerForSample: Any,
+    override val isComplete: Boolean = true
+) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { grid ->
         grid.points.filter { entry ->
             grid.adjacentNodes(entry.key.x, entry.key.y).all { grid.points[it]!! > entry.value }

@@ -11,23 +11,27 @@ interface YearOfPuzzles {
     val puzzles: List<Puzzle>
     val year: Int
 
-    fun runAll() {
-        val yearResult = runTimedNew {
-            Main2023.puzzles.mapIndexed { index, puzzle ->
-                puzzle.run(index + 1, year)
-            }
-        }.let {
-            YearResults(it.solution as List<DayResults>, it.runtime, year)
+    fun runAll() = runTimedNew {
+        puzzles.mapIndexed { index, puzzle ->
+            puzzle.run(index + 1, year)
         }
-
-        println(AsciiTableGenerator.format(yearResult))
+    }.let {
+        YearResults(it.solution as List<DayResults>, it.runtime, year)
     }
 
-    fun runLatest() = Main2023.puzzles.indexOfLast { it.part1ExpectedAnswerForSample != NotStarted }.let {
-        Main2023.puzzles[it].run(it + 1, year)
+    fun runLatest() = puzzles.indexOfLast { it.part1ExpectedAnswerForSample != NotStarted }.let {
+        puzzles[it].run(it + 1, year)
     }
 
     fun run(day: Int) {
-        Main2023.puzzles[day - 1].run(day, year)
+        puzzles[day - 1].run(day, year)
+    }
+
+    fun executeSmort() {
+        if (puzzles.last { it.part1ExpectedAnswerForSample != NotStarted }.isComplete) {
+            println(AsciiTableGenerator.formatInProgress(runAll()))
+        } else {
+            println(AsciiTableGenerator.formatInProgress(runLatest()))
+        }
     }
 }

@@ -22,7 +22,11 @@ private sealed class Instruction {
     }
 }
 
-class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
+class Main(
+    override val part1ExpectedAnswerForSample: Any,
+    override val part2ExpectedAnswerForSample: Any,
+    override val isComplete: Boolean = true
+) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = data.map { Instruction.from(it) }.let { instructions ->
         var horizontal = 0
         var depth = 0

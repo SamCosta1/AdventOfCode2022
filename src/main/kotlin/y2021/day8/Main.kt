@@ -4,7 +4,11 @@ import puzzlerunners.Puzzle
 import utils.RunMode
 import kotlin.math.pow
 
-class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {
+class Main(
+    override val part1ExpectedAnswerForSample: Any,
+    override val part2ExpectedAnswerForSample: Any,
+    override val isComplete: Boolean = true
+) : Puzzle {
 
     val zero = listOf("a", "b", "c", "e", "f", "g")
     val one = listOf("c", "f")

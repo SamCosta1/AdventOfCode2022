@@ -7,7 +7,8 @@ import utils.RunMode
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 8L,
-    override val part2ExpectedAnswerForSample: Any = 10
+    override val part2ExpectedAnswerForSample: Any = 10,
+    override val isComplete: Boolean = true
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { (grid, startPoint) ->
         var loopLength = 0L

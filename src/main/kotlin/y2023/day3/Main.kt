@@ -6,7 +6,8 @@ import y2022.day19.productOfLong
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 4361L,
-    override val part2ExpectedAnswerForSample: Any = 467835L
+    override val part2ExpectedAnswerForSample: Any = 467835L,
+    override val isComplete: Boolean = true
 ): Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any = Parser.parse(data).let { grid ->
         grid.points.filter { entry ->
