@@ -1,10 +1,15 @@
 package y2022.day2
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import java.nio.file.Files
 import java.nio.file.Paths
 
-object Day2Main {
-    val data = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day2/data.txt"))
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 15,
+    override val part2ExpectedAnswerForSample: Any = 12,
+    override val isComplete: Boolean = true
+) : Puzzle {
 
     enum class Move(val score: Int) {
         Rock(1),
@@ -17,11 +22,13 @@ object Day2Main {
                 Paper -> 0
                 Scissors -> 6
             }
+
             Paper -> when (otherMove) {
                 Rock -> 6
                 Paper -> 3
                 Scissors -> 0
             }
+
             Scissors -> when (otherMove) {
                 Rock -> 0
                 Paper -> 6
@@ -32,7 +39,7 @@ object Day2Main {
 
     private fun myScore(myPlay: Move, theirPlay: Move) = myPlay.score + myPlay.winningScore(theirPlay)
 
-    fun runPart1() = data.map { tuple ->
+    override fun runPart1(data: List<String>, runMode: RunMode): Any = data.map { tuple ->
         tuple.split(" ").map {
             when (it) {
                 "A", "X" -> Move.Rock
@@ -43,7 +50,7 @@ object Day2Main {
         }
     }.sumBy { myScore(it.last(), it.first()) }
 
-    fun runPart2() = data.map { tuple ->
+    override fun runPart2(data: List<String>, runMode: RunMode): Any = data.map { tuple ->
         val split = tuple.split(" ")
         val theirPlay = when (split.first()) {
             "A" -> Move.Rock
@@ -52,10 +59,10 @@ object Day2Main {
             else -> throw Exception("Broke innit")
         }
 
-        val myPlay = when(split.last()) {
-            "X" ->  Move.values()[Math.floorMod(Move.values().indexOf(theirPlay) - 1, 3)] // Lose
-            "Y" ->  theirPlay // Draw
-            "Z" ->  Move.values()[Math.floorMod(Move.values().indexOf(theirPlay) + 1, 3)] // Win
+        val myPlay = when (split.last()) {
+            "X" -> Move.values()[Math.floorMod(Move.values().indexOf(theirPlay) - 1, 3)] // Lose
+            "Y" -> theirPlay // Draw
+            "Z" -> Move.values()[Math.floorMod(Move.values().indexOf(theirPlay) + 1, 3)] // Win
             else -> throw Exception("Broken innit")
         }
 

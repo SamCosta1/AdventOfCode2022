@@ -2,7 +2,7 @@ package y2023.day2
 
 import puzzlerunners.Puzzle
 import utils.RunMode
-import y2022.day19.productOf
+import utils.productOf
 import kotlin.math.max
 
 class Main(

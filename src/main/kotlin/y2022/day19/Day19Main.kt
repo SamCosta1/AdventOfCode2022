@@ -1,7 +1,14 @@
 package y2022.day19
 
-class Day19Main(val timeLimit: Int, file: String) {
-    val data = Parser.parse(file)
+import puzzlerunners.Puzzle
+import utils.RunMode
+import utils.productOf
+
+class Main(
+    override val part1ExpectedAnswerForSample: Any,
+    override val part2ExpectedAnswerForSample: Any,
+    override val isComplete: Boolean
+): Puzzle {
 
     data class State(
         val robots: Map<Resource, Int>,
@@ -13,9 +20,9 @@ class Day19Main(val timeLimit: Int, file: String) {
         )
     )
 
-    fun run() = data.sumOf { blueprint ->
+    override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).sumOf { blueprint ->
         computeLargestNumberOfGeodesPossible(
-            timeLimit,
+            24,
             State(mapOf(Resource.Ore to 1, Resource.Clay to 0, Resource.Obsidian to 0, Resource.Geode to 0)),
             blueprint
         ).also {
@@ -23,9 +30,9 @@ class Day19Main(val timeLimit: Int, file: String) {
         }.resourceCount[Resource.Geode]!! * blueprint.name
     }
 
-    fun runPart2() = data.take(3).productOf { blueprint ->
+    override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).take(3).productOf { blueprint ->
         computeLargestNumberOfGeodesPossible(
-            timeLimit,
+            32,
             State(mapOf(Resource.Ore to 1, Resource.Clay to 0, Resource.Obsidian to 0, Resource.Geode to 0)),
             blueprint
         ).also {

@@ -1,6 +1,5 @@
 package y2022.day12
 
-import y2022.day7.Day7Main.debug
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.time.ExperimentalTime
@@ -111,14 +110,5 @@ class Day12Main {
         }
 
         return results.values.minOf { it }
-    }
-
-    private fun printGrid() {
-        data.forEach { row ->
-            row.forEach {
-                print(it.distance.debug() + " ")
-            }
-            println()
-        }
     }
 }

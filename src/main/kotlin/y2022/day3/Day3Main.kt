@@ -1,12 +1,17 @@
 package y2022.day3
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import java.nio.file.Files
 import java.nio.file.Paths
 
-object Day3Main {
-    val data = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day3/data.txt"))
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 157,
+    override val part2ExpectedAnswerForSample: Any = 70,
+    override val isComplete: Boolean = true
+): Puzzle {
 
-    fun run() = data.map { raw ->
+    override fun runPart1(data: List<String>, runMode: RunMode) = data.map { raw ->
         val section1 = raw.take(raw.length / 2).toSet()
         val section2 = raw.takeLast(raw.length / 2).toSet()
 
@@ -18,7 +23,7 @@ object Day3Main {
         commonChars.sumBy { it.priority() }
     }.sum()
 
-    fun runPart2() = data.chunked(3).map { list ->
+    override fun runPart2(data: List<String>, runMode: RunMode) = data.chunked(3).map { list ->
         val commonChars = list.first().filter { list[1].contains(it) && list[2].contains(it) }.toSet()
         commonChars.sumBy { it.priority() }
     }.sum()

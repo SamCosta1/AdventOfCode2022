@@ -1,16 +1,20 @@
 package y2022.day6
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import java.nio.file.Files
 import java.nio.file.Paths
 
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 11,
+    override val part2ExpectedAnswerForSample: Any = 26,
+    override val isComplete: Boolean = false
+): Puzzle {
 
-object Day6Main {
-    val data = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day6/data.txt")).first()
-
-    fun run(): String {
+    override fun runPart1(data: List<String>, runMode: RunMode): Any {
         val segment = LimitedSizeQueue<Char>(4)
         var currentIndex = 0
-        data.trim().toCharArray().forEachIndexed { index, char ->
+        data.first().trim().toCharArray().forEachIndexed { index, char ->
             segment.add(char)
             currentIndex = index
 
@@ -21,10 +25,10 @@ object Day6Main {
         throw Exception("bad")
     }
 
-    fun runPart2(): String {
+    override fun runPart2(data: List<String>, runMode: RunMode): Any {
         val segment = LimitedSizeQueue<Char>(14)
         var currentIndex = 0
-        data.trim().toCharArray().forEachIndexed { index, char ->
+        data.first().trim().toCharArray().forEachIndexed { index, char ->
             segment.add(char)
             currentIndex = index
 

@@ -1,7 +1,6 @@
 package y2022.day17
 
 import y2022.day15.Point
-import y2022.day7.Day7Main.debug
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -88,21 +87,6 @@ class Grid(private val width: Int) {
     fun clear() {
         points.clear()
         topLeftMostPoint = Point(0, -1)
-    }
-    override fun toString() = buildString {
-        appendLine("${topLeftMostPoint.x}  ->  ${bottomRightMostPoint.x}")
-        (topLeftMostPoint.y downTo bottomRightMostPoint.y - 1).forEach { y ->
-            append(y.debug() + " ")
-            (topLeftMostPoint.x - 2..bottomRightMostPoint.x + 2).forEach { x ->
-                append(get(x, y).char)
-            }
-            appendLine()
-        }
-
-        append("     ")
-        append("0123456")
-        append("     ")
-        appendLine()
     }
 
     fun addAll(points: List<Point>, state: State) {

@@ -1,10 +1,16 @@
 package y2022.day13
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import y2022.day13.Parsing.parse
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class Day13Main {
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 0,
+    override val part2ExpectedAnswerForSample: Any = 0,
+    override val isComplete: Boolean = false
+): Puzzle {
 
     data class Pair(val left: Item.MyList, val right: Item.MyList)
     sealed class Item {
@@ -27,12 +33,10 @@ class Day13Main {
 
     }
 
-    val data = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day13/data.txt"))
-        .parse()
 
-    fun run(): Int {
+    override fun runPart1(data: List<String>, runMode: RunMode): Any {
         var indicies = mutableListOf<Int>()
-        data.forEachIndexed { index, pair ->
+        data.parse().forEachIndexed { index, pair ->
             val rightOrder = isRightOrder(pair.left, pair.right) ?: throw Exception("Right order was null")
             if (rightOrder) {
                 indicies.add(index + 1)
@@ -91,7 +95,7 @@ class Day13Main {
     val divider1 = Item.MyList(listOf(Item.MyList(listOf(Item.Integer(2)))))
     val divider2 = Item.MyList(listOf(Item.MyList(listOf(Item.Integer(6)))))
 
-    fun runPart2() = data.toMutableList().apply {
+    override fun runPart2(data: List<String>, runMode: RunMode) = data.parse().toMutableList().apply {
         add(
             Pair(
                 divider1, divider2
@@ -108,14 +112,5 @@ class Day13Main {
         val divider1Index = it.indexOf(divider1) + 1
         val divider2Index = it.indexOf(divider2) + 1
         divider1Index * divider2Index
-    }
-
-    private fun printRawInput() {
-        data.forEach {
-            println(it.left)
-            println(it.right)
-            println("Is Right Order ${isRightOrder(it.left, it.right)}")
-            println()
-        }
     }
 }

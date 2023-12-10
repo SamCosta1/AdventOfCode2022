@@ -25,12 +25,7 @@ object Parser {
     private val regex =
         "Blueprint (\\d+):.*ore robot costs (\\d+).*clay robot costs (\\d+) .*obsidian robot costs (\\d+) ore and (\\d+) clay.*eode robot costs (\\d+) ore and (\\d+).*".toRegex()
 
-    fun parse(file: String) = Files.readAllLines(
-        Paths.get(
-            System.getProperty("user.dir"),
-            "src/main/kotlin/y2022/day19/$file"
-        )
-    ).map { raw ->
+    fun parse(data: List<String>) = data.map { raw ->
         val values = regex.matchEntire(raw)!!.groupValues.drop(1)
         Blueprint(
             name = values[0].toInt(),
@@ -42,20 +37,4 @@ object Parser {
             )
         )
     }
-}
-
-public inline fun <T> Iterable<T>.productOf(selector: (T) -> Int): Int {
-    var product: Int = 1.toInt()
-    for (element in this) {
-        product *= selector(element)
-    }
-    return product
-}
-
-public inline fun <T> Iterable<T>.productOfLong(selector: (T) -> Long): Long {
-    var product = 1L
-    for (element in this) {
-        product *= selector(element)
-    }
-    return product
 }

@@ -1,7 +1,6 @@
 package y2022.day24
 
 import y2022.day14.Day14Main.Point
-import y2022.day7.Day7Main.debug
 
 class Grid(val width: Int, val height: Int) {
     enum class Direction {
@@ -78,22 +77,6 @@ class Grid(val width: Int, val height: Int) {
         newGrid.startPoint = startPoint
         points.forEach { (key, value) ->
             newGrid.points[key] = LinkedHashSet(value)
-        }
-    }
-    override fun toString() = buildString {
-        appendLine("0  ->  $width")
-        (0 until height).forEach { y ->
-            append(y.debug() + " ")
-            (0 until width).forEach { x ->
-                append(get(x, y).let {
-                    if (it.size <= 1) {
-                        it.firstOrNull()?.char ?: debugPoints.get(Point(x, y)) ?: "."
-                    } else {
-                        it.size
-                    }
-                })
-            }
-            appendLine()
         }
     }
 }

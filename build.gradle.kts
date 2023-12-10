@@ -15,6 +15,7 @@ dependencies {
     testImplementation(kotlin("test-junit"))
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.jakewharton.picnic:picnic:0.7.0")
+    implementation("com.mitchtalmadge:ascii-data:1.4.0")
 }
 
 tasks.test {

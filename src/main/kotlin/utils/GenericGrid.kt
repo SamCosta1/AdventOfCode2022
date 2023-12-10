@@ -1,7 +1,5 @@
 package utils
 
-import utils.Point
-import y2022.day7.Day7Main.debug
 import kotlin.math.max
 import kotlin.math.min
 

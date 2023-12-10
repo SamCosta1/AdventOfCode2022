@@ -3,15 +3,15 @@ package y2022.day13
 object Parsing {
 
     fun List<String>.parse() = this.chunked(3).map { raw ->
-        Day13Main.Pair(parseItem(raw.first(), 0).first, parseItem(raw[1], 0).first)
+        Main.Pair(parseItem(raw.first(), 0).first, parseItem(raw[1], 0).first)
     }
 
-    private fun parseItem(raw: String, startIndex: Int): kotlin.Pair<Day13Main.Item.MyList, Int> {
+    private fun parseItem(raw: String, startIndex: Int): kotlin.Pair<Main.Item.MyList, Int> {
         var index = startIndex
         if (raw[index] != '[') {
             throw Exception("Items must start with '[")
         }
-        val thisList = mutableListOf<Day13Main.Item>()
+        val thisList = mutableListOf<Main.Item>()
         var nonListSubstring = ""
 
         index++
@@ -23,11 +23,11 @@ object Parsing {
                 thisList.addAll(nonListSubstring
                     .split(",")
                     .filter { it.isNotBlank() }
-                    .map { Day13Main.Item.Integer(it.toInt()) }
+                    .map { Main.Item.Integer(it.toInt()) }
                 )
                 nonListSubstring = ""
                 when {
-                    raw[index] == ']' -> return kotlin.Pair(Day13Main.Item.MyList(thisList), index + 1)
+                    raw[index] == ']' -> return kotlin.Pair(Main.Item.MyList(thisList), index + 1)
                     raw[index] == '[' -> {
                         val subList = parseItem(raw, index)
                         thisList.add(subList.first)
@@ -37,6 +37,6 @@ object Parsing {
                 }
             }
         }
-        return Pair(Day13Main.Item.MyList(thisList), index)
+        return Pair(Main.Item.MyList(thisList), index)
     }
 }

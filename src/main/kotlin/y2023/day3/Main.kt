@@ -2,7 +2,7 @@ package y2023.day3
 
 import puzzlerunners.Puzzle
 import utils.RunMode
-import y2022.day19.productOfLong
+import utils.productOfLong
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 4361L,

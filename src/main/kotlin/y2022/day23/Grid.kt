@@ -2,7 +2,6 @@ package y2022.day23
 
 
 import y2022.day15.Point
-import y2022.day7.Day7Main.debug
 import kotlin.math.max
 import kotlin.math.min
 
@@ -34,17 +33,6 @@ class Grid {
             topLeftMostPoint = Point(min(topLeftMostPoint.x, point.x), min(topLeftMostPoint.y, point.y))
             bottomRightMostPoint =
                 Point(max(bottomRightMostPoint.x, point.x), max(bottomRightMostPoint.y, point.y))
-        }
-    }
-
-    override fun toString() = buildString {
-        appendLine("${topLeftMostPoint.x}  ->  ${bottomRightMostPoint.x}")
-        (topLeftMostPoint.y - 4..bottomRightMostPoint.y +4).forEach { y ->
-            append(y.debug() + " ")
-            (topLeftMostPoint.x-4..bottomRightMostPoint.x+4).forEach { x ->
-                append(get(x, y).char)
-            }
-            appendLine()
         }
     }
 

@@ -1,9 +1,13 @@
 package y2022.day7
 
-import java.nio.file.Files
-import java.nio.file.Paths
+import puzzlerunners.Puzzle
+import utils.RunMode
 
-object Day7Main {
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 95437,
+    override val part2ExpectedAnswerForSample: Any = 24933642,
+    override val isComplete: Boolean = false
+): Puzzle {
     sealed class RawLineInfo {
         object Ls : RawLineInfo()
         data class Cd(val destination: String) : RawLineInfo()
@@ -26,18 +30,12 @@ object Day7Main {
 
     }
 
-    val data =
-        Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day7/data.txt")).let { rawList ->
-            parseDir(rawList)
-        }
-
-    private fun parseDir(rawLines: List<String>): Entry.Dir {
-
+    private fun parse(data: List<String>): Entry.Dir {
         val root = Entry.Dir("/", 0, mutableListOf(), null)
 
         var currentNode = root
 
-        rawLines.drop(1).map { it.parseLine() }.forEach { info ->
+        data.drop(1).map { it.parseLine() }.forEach { info ->
             when (info) {
                 RawLineInfo.Ls -> { /* No Op */
                 }
@@ -84,27 +82,24 @@ object Day7Main {
         }
     }
 
-    fun Int.debug() = String.format("%02d", this)
-    fun Long.debug() = String.format("%02d", this)
-
     private fun findEntriesMatching(root: Entry.Dir, block: (Entry) -> Boolean): List<Entry> {
         val matchingChildren = root.entries.filter { block(it) }
         val matchingDescendants = root.entries.mapNotNull { it as? Entry.Dir }.map { findEntriesMatching(it, block) }.flatten()
         return matchingDescendants + matchingChildren
     }
 
-    fun run() = findEntriesMatching(data) { it is Entry.Dir }.filter { it.size <= 100000 }.sumBy { it.size.toInt() }
+    override fun runPart1(
+        data: List<String>,
+        runMode: RunMode
+    ) = findEntriesMatching(parse(data)) { it is Entry.Dir }.filter { it.size <= 100000 }.sumBy { it.size.toInt() }
 
-    fun runPart2() : String {
-
+    override fun runPart2(data: List<String>, runMode: RunMode): Any {
         val diskSize = 70000000
         val unusedSpaceTarget =  30000000
 
         val currentFreeSpace = diskSize - data.size
         val targetDirSize = unusedSpaceTarget - currentFreeSpace
-        println("\t\t Root Size: ${data.size}")
-        println("\t\t Target Dir Size: $targetDirSize")
 
-        return findEntriesMatching(data) { it is Entry.Dir }.filter { it.size > targetDirSize }.minOf { it.size }.toString()
+        return findEntriesMatching(parse(data)) { it is Entry.Dir }.filter { it.size > targetDirSize }.minOf { it.size }.toString()
     }
 }

@@ -1,10 +1,6 @@
 package y2023.day3
 
 import utils.GenericGrid
-import y2022.day15.Point
-import y2022.day7.Day7Main.debug
-import kotlin.math.max
-import kotlin.math.min
 
 
 object Parser {

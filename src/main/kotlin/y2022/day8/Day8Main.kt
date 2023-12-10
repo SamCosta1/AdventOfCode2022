@@ -1,13 +1,18 @@
 package y2022.day8
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import java.nio.file.Files
 import java.nio.file.Paths
 
-object Day8Main {
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 21,
+    override val part2ExpectedAnswerForSample: Any = 8,
+    override val isComplete: Boolean
+): Puzzle {
     data class Tree(val height: Int, val colIndex: Int, val rowIndex: Int, var scenicScore: Int, var isVisible: Boolean)
 
-    val data =
-        Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day8/data.txt")).let { rawList ->
+    fun parse(data: List<String>) = data.let { rawList ->
             val structure = Array(rawList.size) { Array<Tree>(rawList.first().length) { Tree(-1, -1, 1, -1, false) } }
 
             rawList.forEachIndexed { index, row ->
@@ -96,7 +101,6 @@ object Day8Main {
         }
     }
 
-    fun run() = data.sumBy { row -> row.count { it.isVisible } }
-
-    fun runPart2() = data.maxOf { row -> row.maxOf { it.scenicScore } }
+    override fun runPart1(data: List<String>, runMode: RunMode) = parse(data).sumBy { row -> row.count { it.isVisible } }
+    override fun runPart2(data: List<String>, runMode: RunMode) = parse(data).maxOf { row -> row.maxOf { it.scenicScore } }
 }

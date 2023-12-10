@@ -1,13 +1,17 @@
 package y2022.day4
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import java.nio.file.Files
 import java.nio.file.Paths
 
-object Day4Main {
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 0,
+    override val part2ExpectedAnswerForSample: Any = 0,
+    override val isComplete: Boolean = false
+): Puzzle {
 
-    val data = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day4/data.txt"))
-
-    fun run() = data.filter { raw ->
+    override fun runPart1(data: List<String>, runMode: RunMode) = data.filter { raw ->
         val ranges = raw.split(",").map { range ->
             range.split("-").map { it.toInt() }
         }.sortedByDescending { it.last() }.sortedBy { it.first() }
@@ -16,7 +20,7 @@ object Day4Main {
         ranges.all { it.last() <= rhsFirst }
     }.count()
 
-    fun runPart2() = data.size - data.filter { raw ->
+    override fun runPart2(data: List<String>, runMode: RunMode) = data.size - data.filter { raw ->
         val ranges = raw.split(",").map { range ->
             range.split("-").map { it.toInt() }
         }.sortedByDescending { it.last() }.sortedBy { it.first() }

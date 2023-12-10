@@ -2,6 +2,7 @@
 
 package puzzlerunners
 
+import puzzlerunners.output.AsciiGraphGenerator
 import puzzlerunners.output.AsciiTableGenerator
 import utils.runTimedNew
 import y2023.Main2023
@@ -29,7 +30,9 @@ interface YearOfPuzzles {
 
     fun executeSmort() {
         if (puzzles.last { it.part1ExpectedAnswerForSample != NotStarted }.isComplete) {
-            println(AsciiTableGenerator.formatInProgress(runAll()))
+            val yearResults = runAll()
+            println(AsciiTableGenerator.formatInProgress(yearResults))
+            println(AsciiGraphGenerator.formatGraph(yearResults))
         } else {
             println(AsciiTableGenerator.formatInProgress(runLatest()))
         }
