@@ -1,7 +1,7 @@
 package y2021.day9
 
 import utils.Point
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 
 class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {

@@ -46,7 +46,6 @@ object Parser {
             }
         }
 
-        println(grid)
         grid[startPoint!!] = grid.determinePipeItem(startPoint!!)
 
         Info(grid, startPoint!!)

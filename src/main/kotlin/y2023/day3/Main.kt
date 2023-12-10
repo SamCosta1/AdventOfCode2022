@@ -1,14 +1,12 @@
 package y2023.day3
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
-import y2022.day19.productOf
 import y2022.day19.productOfLong
-import y2022.day23.adjacentPoints
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any,
-    override val part2ExpectedAnswerForSample: Any
+    override val part1ExpectedAnswerForSample: Any = 4361L,
+    override val part2ExpectedAnswerForSample: Any = 467835L
 ): Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any = Parser.parse(data).let { grid ->
         grid.points.filter { entry ->

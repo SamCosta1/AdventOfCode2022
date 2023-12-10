@@ -1,11 +1,11 @@
 package y2023.day9
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any,
-    override val part2ExpectedAnswerForSample: Any
+    override val part1ExpectedAnswerForSample: Any = 114L,
+    override val part2ExpectedAnswerForSample: Any = 2L
 ): Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any = data.map { row ->
         row.split(" ").map { it.toLong() }

@@ -1,6 +1,6 @@
 package y2021.day10
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 import java.lang.StringBuilder
 

@@ -1,15 +1,13 @@
 package y2023.day2
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 import y2022.day19.productOf
-import kotlin.math.E
 import kotlin.math.max
-import kotlin.math.min
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any,
-    override val part2ExpectedAnswerForSample: Any
+    override val part1ExpectedAnswerForSample: Any = 8,
+    override val part2ExpectedAnswerForSample: Any = 2286
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any = Parser.parse(data).let { games ->
         val initialCounts = mapOf("red" to 12, "green" to 13, "blue" to 14)

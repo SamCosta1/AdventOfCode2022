@@ -1,13 +1,11 @@
 package y2023.day8
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
-import y2022.day19.productOf
-import y2022.day19.productOfLong
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any,
-    override val part2ExpectedAnswerForSample: Any
+    override val part1ExpectedAnswerForSample: Any = 6L,
+    override val part2ExpectedAnswerForSample: Any = 6L
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
         val endNode = info.nodes["ZZZ"]!!

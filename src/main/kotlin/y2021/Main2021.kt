@@ -1,5 +1,6 @@
 package y2021
 
+import puzzlerunners.Puzzle
 import utils.*
 import utils.runTimed
 

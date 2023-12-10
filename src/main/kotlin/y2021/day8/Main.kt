@@ -1,8 +1,7 @@
 package y2021.day8
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
-import java.lang.Exception
 import kotlin.math.pow
 
 class Main(override val part1ExpectedAnswerForSample: Any, override val part2ExpectedAnswerForSample: Any) : Puzzle {

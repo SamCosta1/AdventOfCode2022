@@ -1,6 +1,6 @@
 package y2021.day12
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 
 typealias Route = List<Cave>

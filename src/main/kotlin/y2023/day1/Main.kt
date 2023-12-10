@@ -1,12 +1,11 @@
 package y2023.day1
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
-import kotlin.math.min
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any,
-    override val part2ExpectedAnswerForSample: Any
+    override val part1ExpectedAnswerForSample: Any = 142,
+    override val part2ExpectedAnswerForSample: Any = 281
 ): Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any = data.sumOf { row ->
         val first = row.first { it.toString().toIntOrNull() != null }.toString()

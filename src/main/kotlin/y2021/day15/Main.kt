@@ -1,6 +1,6 @@
 package y2021.day15
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 import utils.Point
 

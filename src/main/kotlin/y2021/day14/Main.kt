@@ -1,6 +1,6 @@
 package y2021.day14
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 
 typealias SubResult = Map<Char, Long>

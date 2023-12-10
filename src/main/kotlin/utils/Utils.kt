@@ -1,5 +1,7 @@
 package utils
 
+import puzzlerunners.DayResults
+import puzzlerunners.ExecutionResult
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.system.measureTimeMillis
@@ -21,7 +23,7 @@ internal fun runTimed(repeats: Int = 1, block: () -> Any): String {
 }
 
 fun Long.formatTimeMs() = "${String.format("%05d", this)}ms"
- fun runTimedNew(repeats: Int = 1, block: () -> Any): Pair<Any?, Long> {
+ fun runTimedNew(repeats: Int = 1, block: () -> Any): ExecutionResult {
     var answer: Any? = null
     val time = measureTimeMillis {
         repeat(repeats) {
@@ -29,7 +31,7 @@ fun Long.formatTimeMs() = "${String.format("%05d", this)}ms"
         }
     }
 
-    return Pair(answer, time)
+    return ExecutionResult(answer, time)
 }
 
 fun Int.debug() = String.format("%02d", this)

@@ -1,8 +1,7 @@
-package utils
+package puzzlerunners
 
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.time.Year
 
 object NewYearCreator {
 

@@ -1,11 +1,11 @@
 package y2023.day5
 
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any,
-    override val part2ExpectedAnswerForSample: Any
+    override val part1ExpectedAnswerForSample: Any = 35L,
+    override val part2ExpectedAnswerForSample: Any = 46L
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
         info.seeds.minOf { seed ->

@@ -2,12 +2,12 @@ package y2023.day10
 
 import utils.GenericGrid
 import utils.Point
-import utils.Puzzle
+import puzzlerunners.Puzzle
 import utils.RunMode
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any,
-    override val part2ExpectedAnswerForSample: Any
+    override val part1ExpectedAnswerForSample: Any = 8L,
+    override val part2ExpectedAnswerForSample: Any = 10
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { (grid, startPoint) ->
         var loopLength = 0L
@@ -45,7 +45,8 @@ class Main(
 
         // Count the number of times a line projected across the bottom half of the cells crosses over the loop
         val pipesThatBlockBottom = setOf("│", "┐", "┌")
-        return (x..grid.bottomRightMostPoint.x + 2).asSequence()
+        return (x..grid.bottomRightMostPoint.x + 2)
+            .asSequence()
             .map { Point(it, y) }
             .filter { loop.contains(it) }
             .map { grid[it] }

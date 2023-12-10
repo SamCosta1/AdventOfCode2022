@@ -14,6 +14,7 @@ repositories {
 dependencies {
     testImplementation(kotlin("test-junit"))
     implementation(kotlin("stdlib-jdk8"))
+    implementation("com.jakewharton.picnic:picnic:0.7.0")
 }
 
 tasks.test {

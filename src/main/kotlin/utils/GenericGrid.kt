@@ -6,7 +6,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 class GenericGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
-
     interface GenericGridItem {
         val char: String
     }
