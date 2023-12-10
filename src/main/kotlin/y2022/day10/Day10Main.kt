@@ -8,7 +8,7 @@ import java.nio.file.Paths
 class Main(
     override val part1ExpectedAnswerForSample: Any = 0,
     override val part2ExpectedAnswerForSample: Any = 0,
-    override val isComplete: Boolean
+    override val isComplete: Boolean = false
 ): Puzzle{
 
     sealed class Instruction {

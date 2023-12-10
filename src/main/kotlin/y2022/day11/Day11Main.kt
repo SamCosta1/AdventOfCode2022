@@ -1,10 +1,16 @@
 package y2022.day11
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import java.math.RoundingMode
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class Day11Main {
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 10605L,
+    override val part2ExpectedAnswerForSample: Any = 2713310158L,
+    override val isComplete: Boolean = false
+): Puzzle {
     data class Monkey(
         val name: String,
         var numInspections: Long = 0L,
@@ -17,7 +23,7 @@ class Day11Main {
         fun simpleString() = "Monkey $name: $numInspections $items"
     }
 
-    val data = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day11/data.txt"))
+    val data1 = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day11/data.txt"))
         .chunked(7)
         .map { raw ->
             Monkey(
@@ -45,10 +51,10 @@ class Day11Main {
         }
     }
 
-    val superDivisor by lazy { data.map { it.testDivisor }.reduce { acc, l -> acc * l } }
+    val superDivisor by lazy { data1.map { it.testDivisor }.reduce { acc, l -> acc * l } }
 
     fun executeRound(worryDivisor: Double) {
-        data.forEach { monkey ->
+        data1.forEach { monkey ->
             monkey.items.forEach { item ->
                 // Inspect
                 val inspected = monkey.operation(item)
@@ -60,33 +66,34 @@ class Day11Main {
                 } else {
                     monkey.falseMonkeyName
                 }
-                data.first { it.name == monkeyToThrow }.items.add(postRelief % superDivisor)
+                data1.first { it.name == monkeyToThrow }.items.add(postRelief % superDivisor)
             }
             monkey.items.clear()
 
         }
     }
-    fun run(): String {
+
+    override fun runPart1(data: List<String>, runMode: RunMode): Any {
         repeat(20) {
             executeRound(worryDivisor = 3.0)
         }
 
-        return data
+        return data1
             .sortedBy { it.numInspections }
             .takeLast(2)
             .map { it.numInspections }
-            .reduce { acc, i -> i * acc }.toString()
+            .reduce { acc, i -> i * acc }
     }
 
-    fun runPart2(): String {
+    override fun runPart2(data: List<String>, runMode: RunMode): Any {
         repeat(10000) {
             executeRound(worryDivisor = 1.0)
         }
 
-        return data
+        return data1
             .sortedBy { it.numInspections }
             .takeLast(2)
             .map { it.numInspections }
-            .reduce { acc, i -> i * acc }.toString()
+            .reduce { acc, i -> i * acc }
     }
 }

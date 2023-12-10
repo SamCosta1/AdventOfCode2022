@@ -2,14 +2,16 @@ package y2022.day9
 
 import puzzlerunners.Puzzle
 import utils.RunMode
+import kotlin.math.abs
+import kotlin.math.sign
+
 import java.nio.file.Files
 import java.nio.file.Paths
-import kotlin.math.abs
 import kotlin.math.sign
 
 data class Main(
     override val part1ExpectedAnswerForSample: Any = 13,
-    override val part2ExpectedAnswerForSample: Any = 36,
+    override val part2ExpectedAnswerForSample: Any = 1,
     override val isComplete: Boolean = false
 ): Puzzle {
 
@@ -84,7 +86,7 @@ data class Main(
             }
         }
 
-        return tailPositions.size.toString()
+        return tailPositions.size
     }
 
     private fun computeNewTailPos(tailPos: Position, newHeadPos: Position): Position {

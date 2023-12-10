@@ -15,6 +15,8 @@ object Main2022: YearOfPuzzles {
         y2022.day7.Main(),
         y2022.day8.Main(),
         y2022.day9.Main(),
+//        y2022.day10.Main(),
+        y2022.day11.Main(),
     )
 
     override val year: Int = 2022
