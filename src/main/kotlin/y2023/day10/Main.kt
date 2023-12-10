@@ -1,5 +1,6 @@
 package y2023.day10
 
+import utils.GenericGrid
 import utils.Point
 import utils.Puzzle
 import utils.RunMode
@@ -7,7 +8,7 @@ import utils.RunMode
 class Main(
     override val part1ExpectedAnswerForSample: Any,
     override val part2ExpectedAnswerForSample: Any
-): Puzzle {
+) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { (grid, startPoint) ->
         var loopLength = 0L
         followLoop(grid, startPoint) { loopLength++ }
@@ -19,44 +20,36 @@ class Main(
         loop.add(startPoint)
         followLoop(grid, startPoint, loop::add)
 
-        val maxPoint = grid.bottomRightMostPoint.let { Point(it.x + 1, it.y + 1) }
-        val outsideTheLoopPoints = mutableSetOf<Point>().also {
-            shrinkWrap(Point(-1, -1), maxPoint, it, loop)
-        }
-
         val insideTiles = mutableSetOf<Point>()
         for (x in 0..grid.bottomRightMostPoint.x) {
             for (y in 0..grid.bottomRightMostPoint.y) {
                 val point = Point(x, y)
-                if (!outsideTheLoopPoints.contains(point)
-                    && !loop.contains(point)) {
+                if (point.isInsideLoop(grid, loop)) {
                     insideTiles.add(point)
                 }
             }
         }
-        outsideTheLoopPoints.forEach {
-            grid[it] = Parser.PipeItem(char = "O")
-        }
+
+        // This is just for debugging
         insideTiles.forEach {
-            grid[it] = Parser.PipeItem(char = "I")
+            grid[it] = Parser.PipeItem("I")
         }
-        println(grid)
 
         insideTiles.size
     }
 
-    fun shrinkWrap(thisPoint: Point, maxPoint: Point, allPoints: MutableSet<Point>, loopPoints: Set<Point>) {
-        allPoints.add(thisPoint)
-
-        thisPoint.adjacentPoints().filter {
-            it.x >= -1
-                    && it.y >= -1
-                    && it.x <= maxPoint.x
-                    && it.y <= maxPoint.y
-                    && !allPoints.contains(it)
-                    && !loopPoints.contains(it)
-        }.forEach {
-            shrinkWrap(it, maxPoint, allPoints, loopPoints)
+    private fun Point.isInsideLoop(grid: GenericGrid<Parser.PipeItem>, loop: Set<Point>): Boolean {
+        if (loop.contains(this)) {
+            return false
         }
+
+        // Count the number of times a line projected across the bottom half of the cells crosses over the loop
+        val pipesThatBlockBottom = setOf("│", "┐", "┌")
+        return (x..grid.bottomRightMostPoint.x + 2).asSequence()
+            .map { Point(it, y) }
+            .filter { loop.contains(it) }
+            .map { grid[it] }
+            .filter { pipesThatBlockBottom.contains(it.char) }
+            .count() % 2 == 1
     }
 }

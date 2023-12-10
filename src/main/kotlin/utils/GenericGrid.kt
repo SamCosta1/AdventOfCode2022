@@ -14,6 +14,7 @@ class GenericGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
     val points = mutableMapOf<Point, Item>()
     var topLeftMostPoint = Point(Long.MAX_VALUE - 3, 0)
     var bottomRightMostPoint = Point(Long.MIN_VALUE + 3, Long.MIN_VALUE + 3)
+    var printBuffer = 0
 
     operator fun get(point: Point) = points.getOrDefault(point, defaultItem)
     operator fun get(x: Long, y: Long) = points.getOrDefault(Point(x, y), defaultItem)
@@ -29,10 +30,27 @@ class GenericGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
     }
 
     override fun toString() = buildString {
-        appendLine("${topLeftMostPoint.x}  ->  ${bottomRightMostPoint.x}")
-        (topLeftMostPoint.y - 1..bottomRightMostPoint.y + 1).forEach { y ->
-            append(y.debug() + " ")
-            (topLeftMostPoint.x - 1..bottomRightMostPoint.x + 1).forEach { x ->
+        val maxXIndexDigits = max(
+            (topLeftMostPoint.x - printBuffer).toString().length,
+            (bottomRightMostPoint.x - printBuffer).toString().length,
+        )
+        val maxYDigits = max(
+            (bottomRightMostPoint.y + printBuffer).toString().length,
+            (topLeftMostPoint.y - printBuffer).toString().length,
+        )
+
+        repeat(maxXIndexDigits) { digitIndex ->
+            append((1..maxYDigits).joinToString("") { " " })
+            append("│")
+
+            (topLeftMostPoint.x - printBuffer..bottomRightMostPoint.x + printBuffer).forEach {
+                append(String.format("%0${maxXIndexDigits}d", it)[digitIndex])
+            }
+            appendLine()
+        }
+        (topLeftMostPoint.y - printBuffer..bottomRightMostPoint.y + printBuffer).forEach { y ->
+            append(String.format("%0${maxYDigits}d", y) + "│")
+            (topLeftMostPoint.x - printBuffer..bottomRightMostPoint.x + printBuffer).forEach { x ->
                 append(get(x, y).char)
             }
             appendLine()
@@ -53,6 +71,6 @@ class GenericGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
         Point(x + 1, y),
         Point(x + 1, y - 1),
         Point(x, y - 1),
-    ).filter { (it.x in topLeftMostPoint.x .. bottomRightMostPoint.x) && (it.y in topLeftMostPoint.x .. bottomRightMostPoint.y) }
+    ).filter { (it.x in topLeftMostPoint.x..bottomRightMostPoint.x) && (it.y in topLeftMostPoint.x..bottomRightMostPoint.y) }
 
 }

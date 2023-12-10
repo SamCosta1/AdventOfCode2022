@@ -34,11 +34,11 @@ fun Puzzle.run(day: Int, year: Int) {
             }"
         )
         if (sampleCorrect) {
-            println("       Real     : ${
-                runTimedNew {
-                    runPart1(real, RunMode.Real)
-                }.let { "(${it.second.formatTimeMs()}) | ${it.first}" }
-            }")
+//            println("       Real     : ${
+//                runTimedNew {
+//                    runPart1(real, RunMode.Real)
+//                }.let { "(${it.second.formatTimeMs()}) | ${it.first}" }
+//            }")
         }
     }
 
@@ -56,11 +56,11 @@ fun Puzzle.run(day: Int, year: Int) {
             }"
         )
         if (sampleCorrect) {
-            println("       Real     : ${
-                runTimedNew {
-                    runPart2(real, RunMode.Real)
-                }.let { "(${it.second.formatTimeMs()}) | ${it.first}" }
-            }")
+//            println("       Real     : ${
+//                runTimedNew {
+//                    runPart2(real, RunMode.Real)
+//                }.let { "(${it.second.formatTimeMs()}) | ${it.first}" }
+//            }")
         }
     }
 }
