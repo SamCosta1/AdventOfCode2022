@@ -9,5 +9,6 @@ fun main() {
 //    Main2022.runAll()
 //    Main2023.runAll()
 
-    Main2023.runAll()
+//    Main2023.runAll()
+    Main2023.runLatest()
 }

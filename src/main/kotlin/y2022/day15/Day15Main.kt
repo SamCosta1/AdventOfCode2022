@@ -6,7 +6,9 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-data class Point(val x: Long, val y: Long)
+data class Point(val x: Long, val y: Long) {
+    constructor(x: Int,  y: Int) : this(x.toLong(), y.toLong())
+}
 class Day15Main(val file: String) {
 
     data class SensorBeaconPair(

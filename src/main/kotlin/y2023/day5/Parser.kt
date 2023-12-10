@@ -57,37 +57,28 @@ object Parser {
                 }
             }
 
-            val log = { str: String ->
-//                println(str)
-            }
-            log("--------")
-            log("Source $source")
-            for ((index, map) in sortedMaps.withIndex()) {
+            for (map in sortedMaps) {
                 if (currentRange.isEmpty()) {
                     break
                 }
-                // Add the bit before this map
+                // Add the bit up to the start of this map
                 addResult(currentRange.coerceAtMost(map.sourceStart-1))
 
+                // If that's the entire range we're done
                 if (currentRange.last < map.sourceStart) {
                     break
                 }
-                log("Considering map: $map")
-                log("added before ${result.lastOrNull()}")
-                // Add the bit that overlaps this map
+
+                // Add the bit that overlaps this map (and actually do the conversion
                 val overlapping = currentRange.coerceAtLeast(map.sourceStart).coerceAtMost(map.sourceEnd -1)
-                log("overlapping $overlapping")
                 addResult(map.map(overlapping.first)..map.map(overlapping.last))
 
+                // Update the range to start after this map finishes
                 currentRange = currentRange.coerceAtLeast(map.sourceEnd)
-                log("current range now $currentRange  result ${result.filter { !it.isEmpty() }}")
             }
 
             addResult(currentRange)
-            return result.filter { !it.isEmpty() }.also {
-                log("result $it")
-                log("--------")
-            }
+            return result.filter { !it.isEmpty() }
         }
     }
 
