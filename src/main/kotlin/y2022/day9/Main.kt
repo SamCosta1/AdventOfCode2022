@@ -1,11 +1,17 @@
 package y2022.day9
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.math.abs
 import kotlin.math.sign
 
-object Main {
+data class Main(
+    override val part1ExpectedAnswerForSample: Any = 13,
+    override val part2ExpectedAnswerForSample: Any = 36,
+    override val isComplete: Boolean = false
+): Puzzle {
 
     data class Move(val direction: Direction, val moves: Int)
     data class Position(val x: Int, val y: Int)
@@ -16,8 +22,7 @@ object Main {
         Right
     }
 
-    val data =
-        Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day9/data.txt")).map { raw ->
+    private fun parse(data: List<String>) = data.map { raw ->
             val split = raw.split(" ")
             Move(
                 when (split.first()) {
@@ -30,15 +35,14 @@ object Main {
             )
         }
 
-    fun run(): String {
-
+    override fun runPart1(data: List<String>, runMode: RunMode): Any {
         var headPos = Position(0, 0) // Bottom left
         var tailPos = Position(0, 0) // Bottom left
 
         val tailPositions = mutableSetOf(tailPos)
         val headPositions = mutableSetOf(headPos)
 
-        data.forEach { move ->
+        parse(data).forEach { move ->
             repeat(move.moves) {
                 headPos = computeNewPosition(headPos, move.direction)
 
@@ -49,7 +53,7 @@ object Main {
             }
         }
 
-        return tailPositions.size.toString()
+        return tailPositions.size
     }
 
     private fun Position.isTouching(
@@ -63,12 +67,12 @@ object Main {
         Direction.Right -> oldPos.copy(x = oldPos.x + 1)
     }
 
-    fun runPart2(): String {
+    override fun runPart2(data: List<String>, runMode: RunMode): Any {
         val positions = Array(10) { Position(0, 0) }
 
         val tailPositions = mutableSetOf(positions.last())
 
-        data.forEach { move ->
+        parse(data).forEach { move ->
             repeat(move.moves) {
                 positions[0] = computeNewPosition(positions[0], move.direction)
 

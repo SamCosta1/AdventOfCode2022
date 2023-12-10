@@ -1,29 +1,26 @@
 package y2022.day10
 
+import puzzlerunners.Puzzle
+import utils.RunMode
 import java.nio.file.Files
 import java.nio.file.Paths
 
-object Day10Main {
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 0,
+    override val part2ExpectedAnswerForSample: Any = 0,
+    override val isComplete: Boolean
+): Puzzle{
 
     sealed class Instruction {
         object Noop : Instruction()
         data class Add(val num: Int) : Instruction()
     }
 
-    val data =
-        Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day10/data.txt")).map {
-            if (it == "noop") {
-                Instruction.Noop
-            } else {
-                Instruction.Add(it.split(" ").last().toInt())
-            }
-        }
-
     data class State(val cycleNum: Int, val x: Int) {
         val strength: Int get() = cycleNum * x
     }
 
-    private fun execute(): List<State> {
+    private fun execute(data: List<Instruction>): List<State> {
         var x = 1
         var cycle = 1
 
@@ -55,9 +52,19 @@ object Day10Main {
         return states
     }
 
-    fun run() = execute().filter { (it.cycleNum - 20) % 40 == 0 }.sumBy { it.strength }.toString()
+    private fun parse(data: List<String>) = data.map {
+        if (it == "noop") {
+            Instruction.Noop
+        } else {
+            Instruction.Add(it.split(" ").last().toInt())
+        }
+    }
 
-    fun runPart2(): String {
+    override fun runPart1(data: List<String>, runMode: RunMode) = execute(parse(data))
+        .filter { (it.cycleNum - 20) % 40 == 0 }
+        .sumBy { it.strength }.toString()
+
+    override fun runPart2(data: List<String>, runMode: RunMode): Any = parse(data).let { instructions ->
         var x = 1
         var cycle = 1
 
@@ -74,7 +81,7 @@ object Day10Main {
                 str.append("  ")
             }
 
-            when (val instruction = data[instructionIndex]) {
+            when (val instruction = instructions[instructionIndex]) {
                 Instruction.Noop -> {
                     states.add(State(cycle++, x))
                     instructionIndex++
@@ -98,6 +105,6 @@ object Day10Main {
             }
         }
 
-        return str.toString()
+        str.toString()
     }
 }

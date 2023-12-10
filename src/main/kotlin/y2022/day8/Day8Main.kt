@@ -2,13 +2,11 @@ package y2022.day8
 
 import puzzlerunners.Puzzle
 import utils.RunMode
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 21,
     override val part2ExpectedAnswerForSample: Any = 8,
-    override val isComplete: Boolean
+    override val isComplete: Boolean = true
 ): Puzzle {
     data class Tree(val height: Int, val colIndex: Int, val rowIndex: Int, var scenicScore: Int, var isVisible: Boolean)
 

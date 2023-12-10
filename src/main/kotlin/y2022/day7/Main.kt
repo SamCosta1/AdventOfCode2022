@@ -2,12 +2,14 @@ package y2022.day7
 
 import puzzlerunners.Puzzle
 import utils.RunMode
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 95437,
-    override val part2ExpectedAnswerForSample: Any = 24933642,
-    override val isComplete: Boolean = false
-): Puzzle {
+    override val part2ExpectedAnswerForSample: Any = 24933642L,
+    override val isComplete: Boolean = true
+) : Puzzle {
     sealed class RawLineInfo {
         object Ls : RawLineInfo()
         data class Cd(val destination: String) : RawLineInfo()
@@ -30,18 +32,22 @@ class Main(
 
     }
 
-    private fun parse(data: List<String>): Entry.Dir {
+
+    private fun parseDir(rawLines: List<String>): Entry.Dir {
+
         val root = Entry.Dir("/", 0, mutableListOf(), null)
 
         var currentNode = root
 
-        data.drop(1).map { it.parseLine() }.forEach { info ->
+        rawLines.drop(1).map { it.parseLine() }.forEach { info ->
             when (info) {
                 RawLineInfo.Ls -> { /* No Op */
                 }
+
                 RawLineInfo.Cd("..") -> {
                     currentNode = currentNode.parent ?: throw Exception("Can't go there")
                 }
+
                 is RawLineInfo.Dir -> currentNode.entries.add(
                     Entry.Dir(
                         info.name,
@@ -50,6 +56,7 @@ class Main(
                         parent = currentNode
                     )
                 )
+
                 is RawLineInfo.File -> currentNode.entries.add(Entry.File(info.name, info.size, parent = currentNode))
                 is RawLineInfo.Cd -> currentNode =
                     (currentNode.entries + currentNode).find { it.name == info.destination } as? Entry.Dir
@@ -66,6 +73,7 @@ class Main(
             is Entry.Dir -> computeSize(entry).also {
                 entry.size = it
             }
+
             is Entry.File -> entry.size
         }
     }.sum()
@@ -82,24 +90,27 @@ class Main(
         }
     }
 
+    fun Int.debug() = String.format("%02d", this)
+    fun Long.debug() = String.format("%02d", this)
+
     private fun findEntriesMatching(root: Entry.Dir, block: (Entry) -> Boolean): List<Entry> {
         val matchingChildren = root.entries.filter { block(it) }
-        val matchingDescendants = root.entries.mapNotNull { it as? Entry.Dir }.map { findEntriesMatching(it, block) }.flatten()
+        val matchingDescendants =
+            root.entries.mapNotNull { it as? Entry.Dir }.map { findEntriesMatching(it, block) }.flatten()
         return matchingDescendants + matchingChildren
     }
 
-    override fun runPart1(
-        data: List<String>,
-        runMode: RunMode
-    ) = findEntriesMatching(parse(data)) { it is Entry.Dir }.filter { it.size <= 100000 }.sumBy { it.size.toInt() }
+    override fun runPart1(data: List<String>, runMode: RunMode) = findEntriesMatching(parseDir(data)) { it is Entry.Dir }.filter { it.size <= 100000 }.sumBy { it.size.toInt() }
 
     override fun runPart2(data: List<String>, runMode: RunMode): Any {
-        val diskSize = 70000000
-        val unusedSpaceTarget =  30000000
 
-        val currentFreeSpace = diskSize - data.size
+        val parsed = parseDir(data)
+        val diskSize = 70000000
+        val unusedSpaceTarget = 30000000
+
+        val currentFreeSpace = diskSize - parsed.size
         val targetDirSize = unusedSpaceTarget - currentFreeSpace
 
-        return findEntriesMatching(parse(data)) { it is Entry.Dir }.filter { it.size > targetDirSize }.minOf { it.size }.toString()
+        return findEntriesMatching(parsed) { it is Entry.Dir }.filter { it.size > targetDirSize }.minOf { it.size }
     }
 }
