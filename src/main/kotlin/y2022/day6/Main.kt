@@ -19,7 +19,7 @@ class Main(
             currentIndex = index
 
             if (segment.toSet().count() == 4) {
-                return (currentIndex + 1).toString()
+                return currentIndex + 1
             }
         }
         throw Exception("bad")
@@ -33,7 +33,7 @@ class Main(
             currentIndex = index
 
             if (segment.toSet().count() == 14) {
-                return (currentIndex + 1).toString()
+                return currentIndex + 1
             }
         }
         throw Exception("bad")

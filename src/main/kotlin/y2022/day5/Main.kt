@@ -6,8 +6,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any = 0,
-    override val part2ExpectedAnswerForSample: Any = 0,
+    override val part1ExpectedAnswerForSample: Any = "CMZ",
+    override val part2ExpectedAnswerForSample: Any = "MCD",
     override val isComplete: Boolean = true
 ): Puzzle {
 

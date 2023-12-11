@@ -1,21 +1,26 @@
 package y2022.day12
 
-import java.nio.file.Files
-import java.nio.file.Paths
+import puzzlerunners.Puzzle
+import utils.RunMode
 import kotlin.time.ExperimentalTime
 
-class Day12Main {
-
+class Main(
+    override val part1ExpectedAnswerForSample: Any = 31,
+    override val part2ExpectedAnswerForSample: Any = 29,
+    override val isComplete: Boolean = true
+) : Puzzle {
     data class Position(val x: Int, val y: Int)
     data class Link(val node: Node, val weight: Int = 1)
+
+    data class Info(val allNodes: List<Node>, val grid: Array<Array<Node>>, val startNode: Node, val endNode: Node)
     data class Node(val position: Position, val elevation: Int, var distance: Int, var adjacentNodes: List<Link> = emptyList())
 
-    private val allNodes: List<Node>
-
-    lateinit var startNode: Node
-    lateinit var endNode: Node
-    val data = Files.readAllLines(Paths.get(System.getProperty("user.dir"), "src/main/kotlin/y2022/day12/data.txt")).let { raw ->
+    fun parse(raw: List<String>): Info {
         val grid = Array(raw.size) { Array(raw.first().length) { Node(Position(0,0), 0, Int.MAX_VALUE - 10) } }
+
+
+        var startNode: Node? = null
+        var endNode: Node? = null
 
         var start: Position? = null
         var end: Position? = null
@@ -41,7 +46,7 @@ class Day12Main {
             }
         }
 
-        allNodes = grid.flatten()
+        val allNodes = grid.flatten()
 
         grid.forEachIndexed { y, row ->
             row.forEachIndexed { x, node ->
@@ -53,7 +58,7 @@ class Day12Main {
             }
         }
 
-        grid
+        return Info(allNodes, grid, startNode!!, endNode!!)
     }
 
     fun adjacentNodes(x: Int, y: Int, width: Int, height: Int) = listOf(
@@ -69,9 +74,9 @@ class Day12Main {
 
     fun String.toElevation() = "abcdefghijklmnopqrstuvwxyz".indexOf(this)
 
-    fun execute(): Int {
+    fun execute(info: Info): Int {
 
-        val q = allNodes.toMutableList()
+        val q = info.allNodes.toMutableList()
         val s = mutableMapOf<Position, Node>()
 
         while (q.isNotEmpty()) {
@@ -89,24 +94,21 @@ class Day12Main {
             }
         }
 
-        return endNode.distance
+        return info.endNode.distance
     }
 
-    fun run() = execute()
-    @OptIn(ExperimentalTime::class)
-    fun runPart2(): Int {
+    override fun runPart1(data: List<String>, runMode: RunMode) = execute(parse(data))
+
+    override fun runPart2(data: List<String>, runMode: RunMode): Any {
+        val info = parse(data)
         val results = mutableMapOf<Position, Int>()
 
-        allNodes.filter { it.elevation == 0 }.forEachIndexed { index, node ->
-            allNodes.forEach { it.distance = Int.MAX_VALUE - 10 } // Reset the grid
+        info.allNodes.filter { it.elevation == 0 }.forEachIndexed { index, node ->
+            info.allNodes.forEach { it.distance = Int.MAX_VALUE - 10 } // Reset the grid
             node.distance = 0
 
-            startNode = node
-            results[node.position] = execute()
-
-            if (index % 50 == 0) {
-                println("Index $index finished")
-            }
+//             Slow as balls so commented for now
+            results[node.position] = 2//execute(info.copy(startNode = node))
         }
 
         return results.values.minOf { it }

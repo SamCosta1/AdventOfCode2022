@@ -58,13 +58,13 @@ fun Puzzle.run(day: Int, year: Int): DayResults {
         null
     }
     val part2Sample = if (part2ExpectedAnswerForSample != NotStarted) runTimedNew {
-        runPart2(sample2, runMode = RunMode.Sample)
+        runCatchingAndLog { runPart2(sample2, runMode = RunMode.Sample) }
     } else {
         null
     }
 
     val part2Real = if (part2Sample?.solution == part2ExpectedAnswerForSample) runTimedNew {
-        runPart2(real, runMode = RunMode.Real)
+        runCatchingAndLog { runPart2(real, runMode = RunMode.Real) }
     } else {
         null
     }

@@ -11,14 +11,14 @@ object Parser {
     private val instructionRegex = "move (\\d+) from (\\d+) to (\\d)".toRegex()
     fun parse(data: List<String>): Info {
         val dividerIndex = data.indexOfFirst { it.isBlank() }
-        val instructions = data.take(dividerIndex - 1).map {
+        val instructions = data.drop(dividerIndex + 1).map {
             val values =
                 instructionRegex.matchEntire(it)?.groupValues?.drop(1)?.map { rawLine -> rawLine.toInt() }!!
             Instruction(count = values.first(), sourceIndex = values[1] - 1, targetIndex = values[2] - 1)
         }
 
-        val stacks = data.drop(dividerIndex + 1).let { rawList ->
-            val stacks = (1..rawList.first().chunked(4).size).map { ArrayDeque<Char>() }
+        val stacks = data.take(dividerIndex - 1).let { rawList ->
+            val stacks = (1..rawList.maxBy { it.length }.chunked(4).size).map { ArrayDeque<Char>() }
 
             rawList.reversed()
                 .map { rawRaw ->

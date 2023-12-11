@@ -1,8 +1,6 @@
 package y2021.day9
 
-import y2022.day12.Day12Main
 import utils.Point
-import y2022.day23.Grid
 
 class Grid(val width: Int, val height: Int) {
     val points = mutableMapOf<Point, Int>()

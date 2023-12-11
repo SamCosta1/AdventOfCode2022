@@ -6,9 +6,9 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any = 0,
-    override val part2ExpectedAnswerForSample: Any = 0,
-    override val isComplete: Boolean = false
+    override val part1ExpectedAnswerForSample: Any = 2,
+    override val part2ExpectedAnswerForSample: Any = 4,
+    override val isComplete: Boolean = true
 ): Puzzle {
 
     override fun runPart1(data: List<String>, runMode: RunMode) = data.filter { raw ->

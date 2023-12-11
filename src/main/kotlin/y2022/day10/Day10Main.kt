@@ -2,13 +2,12 @@ package y2022.day10
 
 import puzzlerunners.Puzzle
 import utils.RunMode
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 0,
     override val part2ExpectedAnswerForSample: Any = 0,
-    override val isComplete: Boolean = false
+    // No expected answers here since they need printing to console to make sense
+    override val isComplete: Boolean = true
 ): Puzzle{
 
     sealed class Instruction {
@@ -62,7 +61,7 @@ class Main(
 
     override fun runPart1(data: List<String>, runMode: RunMode) = execute(parse(data))
         .filter { (it.cycleNum - 20) % 40 == 0 }
-        .sumBy { it.strength }.toString()
+        .sumBy { it.strength }
 
     override fun runPart2(data: List<String>, runMode: RunMode): Any = parse(data).let { instructions ->
         var x = 1
