@@ -7,6 +7,7 @@ import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.text.DecimalFormat
+import java.util.logging.Logger
 
 object NotStarted
 
@@ -52,7 +53,7 @@ fun Puzzle.run(day: Int, year: Int): DayResults {
 
     val part1Sample = runTimedNew { runPart1(sample1, runMode = RunMode.Sample) }
     val part1Real = if (part1Sample.solution == part1ExpectedAnswerForSample) runTimedNew {
-        runPart1(real, runMode = RunMode.Real)
+        runCatchingAndLog { runPart1(real, runMode = RunMode.Real) }
     } else {
         null
     }
@@ -77,6 +78,13 @@ fun Puzzle.run(day: Int, year: Int): DayResults {
         year = year
     )
 }
+
+fun runCatchingAndLog(block: () -> Any) = runCatching {
+    block()
+}.let {
+    it.exceptionOrNull()?.printStackTrace()
+    it.getOrNull()
+} ?: "<Execution Failed>"
 
 private fun readSample(part: Int, day: Int, year: Int): List<String> {
     if (part == 1) return read("src/main/kotlin/y$year/day$day/sample.txt")
