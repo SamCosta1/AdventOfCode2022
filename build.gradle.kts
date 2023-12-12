@@ -17,6 +17,7 @@ dependencies {
     implementation("com.jakewharton.picnic:picnic:0.7.0")
     implementation("com.mitchtalmadge:ascii-data:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.apache.commons:commons-math3:3.6.1")
 
 }
 
