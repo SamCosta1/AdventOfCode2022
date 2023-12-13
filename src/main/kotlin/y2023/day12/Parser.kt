@@ -7,7 +7,7 @@ object Parser {
         Working;
 
         companion object {
-            fun from(char: Char) = when(char) {
+            fun from(char: Char) = when (char) {
                 '?' -> Unknown
                 '#' -> Broken
                 '.' -> Working
@@ -16,7 +16,7 @@ object Parser {
         }
 
         override fun toString(): String {
-            return when(this) {
+            return when (this) {
                 Broken -> "#"
                 Unknown -> "?"
                 Working -> "."
@@ -25,6 +25,7 @@ object Parser {
     }
 
     data class LogEntry(val springs: List<SpringState>, val damagedGroups: List<Int>)
+
     fun parse(data: List<String>) = data.map { row ->
         val (springs, groups) = row.split(" ")
         LogEntry(
@@ -32,12 +33,27 @@ object Parser {
             damagedGroups = groups.split(",").map { it.toInt() }
         )
     }
+
     fun parsePart2(data: List<String>) = data.map { row ->
         val (springs, groups) = row.split(" ")
 
         LogEntry(
-            springs = listOf(springs, springs, springs, springs, springs).joinToString("?").map { SpringState.from(it) },
-            damagedGroups = listOf(groups,groups,groups,groups,groups).joinToString(",").split(",").map { it.toInt() }
+            springs = listOf(
+                springs,
+                springs,
+                springs,
+                springs,
+                springs
+            ).joinToString("?")
+                .map { SpringState.from(it) },
+            damagedGroups = listOf(
+                groups,
+                groups,
+                groups,
+                groups,
+                groups
+            ).joinToString(",").split(",")
+                .map { it.toInt() }
         )
     }
 }
