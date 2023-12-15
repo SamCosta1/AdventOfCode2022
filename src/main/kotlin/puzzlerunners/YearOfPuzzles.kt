@@ -24,9 +24,8 @@ interface YearOfPuzzles {
         puzzles[it].run(it + 1, year)
     }
 
-    fun run(day: Int) {
-        puzzles[day - 1].run(day, year)
-    }
+    fun run(day: Int) = puzzles[day - 1].run(day, year)
+
 
     fun executeSmort() {
         if (puzzles.last { it.part1ExpectedAnswerForSample != NotStarted }.isComplete) {

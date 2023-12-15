@@ -8,7 +8,7 @@ import kotlin.math.min
 class Main(
     override val part1ExpectedAnswerForSample: Any = 405L,
     override val part2ExpectedAnswerForSample: Any = 400L,
-    override val isComplete: Boolean = false
+    override val isComplete: Boolean = true
 ): Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Any  = execute(data, tolerance = 0)
     override fun runPart2(data: List<String>, runMode: RunMode): Any = execute(data = data, tolerance = 1)

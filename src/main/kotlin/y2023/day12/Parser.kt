@@ -11,7 +11,7 @@ object Parser {
                 '?' -> Unknown
                 '#' -> Broken
                 '.' -> Working
-                else -> throw Exception("Unknown char")
+                else -> throw Exception("Unknown char $char")
             }
         }
 

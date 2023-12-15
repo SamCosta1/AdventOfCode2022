@@ -9,4 +9,6 @@ fun main() {
 //    Main2021.runAll()
 //    Main2022.executeSmort()
     Main2023.executeSmort()
+//    println(AsciiTableGenerator.formatInProgress(Main2023.run(12)))
+
 }

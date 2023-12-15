@@ -1,56 +1,24 @@
 package y2023.day12
 
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.apache.commons.math3.util.CombinatoricsUtils
 import puzzlerunners.Puzzle
 import utils.RunMode
 import utils.safeSubList
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any = 21,
+    override val part1ExpectedAnswerForSample: Any = 21L,
     override val part2ExpectedAnswerForSample: Any = 525152L,
     override val isComplete: Boolean = false
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode): Long {
-//        println(
-//            "Checking ${
-//                allNotDefoBroken(
-//                    "id",
-//                    listOf(
-//                        Parser.SpringState.Working,
-//                        Parser.SpringState.Working,
-//                        Parser.SpringState.Broken,
-//                        Parser.SpringState.Broken,
-//                        Parser.SpringState.Broken,
-//                        Parser.SpringState.Working,
-//                        Parser.SpringState.Working
-//                    ),
-//                    listOf(1)
-//                )
-//            }"
-//        )
-//                println(
-//            "Checking ${
-//                allNotDefoBroken(
-//                    "id",
-//                    listOf(
-//                        Parser.SpringState.Working,
-//                        Parser.SpringState.Unknown,
-//                        Parser.SpringState.Working,
-//                        Parser.SpringState.Unknown,
-//                        Parser.SpringState.Unknown,
-//                        Parser.SpringState.Working
-//                    ),
-//                    listOf(1,1)
-//                )
-//            }"
-//        )
-
-        return 0L
-//        return Parser.parse(data).sumOf { entry ->
-//            countArrangements(entry).also {
-////                println("$it | ${entry.springs.joinToString("")}")
-//            }
-//        }
+        return Parser.parse(data).sumOf { entry ->
+            countArrangements(entry).also {
+//                println("$it | ${entry.springs.joinToString("")}")
+            }
+        }
     }
 
     private fun countArrangements(log: Parser.LogEntry): Long {
@@ -329,21 +297,30 @@ class Main(
     }
 
 
+    val mutex = Mutex()
     override fun runPart2(data: List<String>, runMode: RunMode): Long {
+//        if (runMode != RunMode.Sample) {
+//            return 0L
+//        }
         val parsed = Parser.parsePart2(data)
         // // // println(parsed.size)
-        var count = 0
-        return parsed.take(1).sumOf { entry ->
-//            countArrangementsOld(entry).also {
-//                println("OLD $it | ${entry.springs.joinToString("")}")
-//
-//            }
-
-            println(entry.springs.joinToString(""))
-            countArrangements(entry).also {
-                   println("Count ${count++}")
-
+        var count = 0L
+        var total = 0L
+            runBlocking {
+                GlobalScope.launch {
+                    parsed.map { entry ->
+                        async {
+                            countArrangements(entry).also {
+                                mutex.withLock {
+                                    total += it
+                                    println("Count $it ${count++}")
+                                }
+                            }
+                        }
+                    }.awaitAll()
+                }.join()
             }
-        }
+
+        return total
     }
 }
