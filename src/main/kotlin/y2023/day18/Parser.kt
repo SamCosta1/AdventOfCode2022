@@ -6,7 +6,11 @@ import y2023.day3.Parser
 
 object Parser {
     data class InputLine(val direction: MovementDirection, val amount: Long, val hash: String): GenericGrid.GenericGridItem {
-        override val char: String = amount.takeIf { it > 0 }?.let { "#" } ?: "."
+        override val char: String = when {
+            amount <0 -> "."
+            amount>100 -> "O"
+            else -> "#"
+        }
 
         val isTrench = amount > 0
     }
