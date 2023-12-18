@@ -21,6 +21,13 @@ data class Point(val x: Long, val y: Long) {
         MovementDirection.East -> right
     }
 
+    operator fun invoke(direction: MovementDirection, amount: Long) = when(direction) {
+        MovementDirection.North -> Point(x, y - amount)
+        MovementDirection.South -> Point(x, y + amount)
+        MovementDirection.West -> Point(x - amount, y)
+        MovementDirection.East ->Point(x + amount, y)
+    }
+
     fun adjacentPoints() = listOf(
         Point(x - 1, y - 1),
         Point(x - 1, y),
