@@ -81,7 +81,7 @@ class Main(
 //                        grid[x, y] = Parser.InputLine(MovementDirection.North, 400, "")
                     }
 
-                }git
+                }
             }
         }
 //        println(grid)
