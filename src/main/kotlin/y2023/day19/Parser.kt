@@ -5,10 +5,27 @@ typealias WorkflowName = String
 object Parser {
     data class Part(val x: Long, val m: Long, val a: Long, val s: Long)
 
+    enum class Operation(val raw: String) {
+        LessThan("<"),
+        LessThanOrEqual("<="),
+        GreaterThan(">"),
+        GreaterThanOrEqual(">=")
+    }
+
     sealed class WorkflowStep {
+        val invert: WorkflowStep.Conditional? get() = when(this) {
+            is Conditional -> when (operation) {
+                Operation.LessThan -> copy(operation = Operation.GreaterThanOrEqual)
+                Operation.LessThanOrEqual -> copy(operation = Operation.GreaterThan)
+                Operation.GreaterThan -> copy(operation = Operation.LessThanOrEqual)
+                Operation.GreaterThanOrEqual -> copy(operation = Operation.LessThan)
+            }
+            is Default -> null
+        }
+
         data class Conditional(
             val subject: Char,
-            val operation: Char,
+            val operation: Operation,
             val ifTrueResult: String,
             val valueToCompare: Long
         ): WorkflowStep()
@@ -43,7 +60,7 @@ object Parser {
                 val split = rawStep.split(":")
                 WorkflowStep.Conditional(
                     subject = split[0][0],
-                    operation = split[0][1],
+                    operation = Operation.entries.first { it.raw == split[0][1].toString() },
                     valueToCompare = split[0].drop(2).toLong(),
                     ifTrueResult = split[1])
             } else {
