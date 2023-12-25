@@ -24,7 +24,7 @@ internal fun runTimed(repeats: Int = 1, block: () -> Any): String {
 }
 
 fun Long.formatTimeMs() = "${String.format("%05d", this)}ms"
- fun runTimedNew(repeats: Int = 1, block: () -> Any): ExecutionResult {
+fun runTimedNew(repeats: Int = 1, block: () -> Any): ExecutionResult {
     var answer: Any? = null
     val time = measureNanoTime {
         repeat(repeats) {
@@ -44,3 +44,19 @@ fun parseFile(year: Int, day: Int, file: String) = Files.readAllLines(
         "src/main/kotlin/y$year/day$day/$file"
     )
 )
+
+fun getAlphabetLetter(index: Int) = buildString {
+    if (index < 0) {
+        return "Invalid index"
+    }
+    if (index == 0) {
+        return "A"
+    }
+
+    var remainingIndex = index
+    while (remainingIndex > 0) {
+        val charValue = (remainingIndex ) % 26
+        insert(0, ('A' + charValue).toChar())
+        remainingIndex /= 26
+    }
+}
