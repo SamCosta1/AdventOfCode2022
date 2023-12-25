@@ -14,6 +14,13 @@ data class Point(val x: Long, val y: Long) {
     val topRight get() = Point(x + 1, y - 1)
     val top get() = Point(x, y - 1)
 
+    operator fun invoke(direction: MovementDirection) = when(direction) {
+        MovementDirection.North -> top
+        MovementDirection.South -> bottom
+        MovementDirection.West -> left
+        MovementDirection.East -> right
+    }
+
     fun adjacentPoints() = listOf(
         Point(x - 1, y - 1),
         Point(x - 1, y),

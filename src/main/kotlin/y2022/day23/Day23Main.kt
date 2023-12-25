@@ -1,13 +1,8 @@
 package y2022.day23
 
+import utils.MovementDirection
 import y2022.day15.Point
 
-enum class MovementDirection {
-    North,
-    South,
-    West,
-    East
-}
 
 class Day23Main(val file: String) {
 
