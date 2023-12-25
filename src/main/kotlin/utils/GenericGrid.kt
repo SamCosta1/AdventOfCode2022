@@ -54,8 +54,12 @@ class GenericGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
         }
     }
 
-    fun addAll(points: List<Point>, item: Item) {
+    fun addAll(points: Collection<Point>, item: Item) {
         points.forEach { this[it] = item }
+    }
+
+    fun copy() = GenericGrid<Item>(defaultItem).also { newGrid ->
+        points.forEach { newGrid[it.key] = it.value }
     }
 
     fun adjacentPoints(point: Point) = adjacentPoints(point.x, point.y)
