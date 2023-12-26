@@ -1,11 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("application")
+    id("java")
     kotlin("jvm") version "1.9.21"
 }
 
 group = "me.samdc"
 version = "1.0-SNAPSHOT"
+
+configure<ApplicationPluginConvention> {
+    mainClassName = "com.example.Main"
+}
+
 
 repositories {
     mavenCentral()

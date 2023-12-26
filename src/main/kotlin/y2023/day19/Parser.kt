@@ -13,23 +13,34 @@ object Parser {
     }
 
     sealed class WorkflowStep {
-        val invert: WorkflowStep.Conditional? get() = when(this) {
-            is Conditional -> when (operation) {
-                Operation.LessThan -> copy(operation = Operation.GreaterThanOrEqual)
-                Operation.LessThanOrEqual -> copy(operation = Operation.GreaterThan)
-                Operation.GreaterThan -> copy(operation = Operation.LessThanOrEqual)
-                Operation.GreaterThanOrEqual -> copy(operation = Operation.LessThan)
+        val invert: WorkflowStep.Conditional?
+            get() = when (this) {
+                is Conditional -> when (operation) {
+                    Operation.LessThan -> copy(operation = Operation.GreaterThanOrEqual)
+                    Operation.LessThanOrEqual -> copy(operation = Operation.GreaterThan)
+                    Operation.GreaterThan -> copy(operation = Operation.LessThanOrEqual)
+                    Operation.GreaterThanOrEqual -> copy(operation = Operation.LessThan)
+                }
+
+                is Default -> null
             }
-            is Default -> null
-        }
 
         data class Conditional(
             val subject: Char,
             val operation: Operation,
             val ifTrueResult: String,
             val valueToCompare: Long
-        ): WorkflowStep()
-        data class Default(val defaultResult: WorkflowName) : WorkflowStep()
+        ) : WorkflowStep() {
+            override fun toString(): String {
+                return "{$subject${operation.raw}$valueToCompare}->$ifTrueResult"
+            }
+        }
+
+        data class Default(val defaultResult: WorkflowName) : WorkflowStep() {
+            override fun toString(): String {
+                return "{$defaultResult}"
+            }
+        }
     }
 
     data class Info(val workflows: Map<WorkflowName, List<WorkflowStep>>, val parts: List<Part>)
@@ -62,7 +73,8 @@ object Parser {
                     subject = split[0][0],
                     operation = Operation.entries.first { it.raw == split[0][1].toString() },
                     valueToCompare = split[0].drop(2).toLong(),
-                    ifTrueResult = split[1])
+                    ifTrueResult = split[1]
+                )
             } else {
                 WorkflowStep.Default(rawStep)
             }

@@ -44,3 +44,8 @@ fun parseFile(year: Int, day: Int, file: String) = Files.readAllLines(
         "src/main/kotlin/y$year/day$day/$file"
     )
 )
+
+ fun IntRange.coerceAtMost(value: Int) = (first..kotlin.math.min(last, value))
+ fun IntRange.coerceAtLeast(value: Int) = (kotlin.math.max(first, value)..last)
+ fun LongRange.coerceAtMost(value: Long) = (first..kotlin.math.min(last, value))
+ fun LongRange.coerceAtLeast(value: Long) = (java.lang.Long.max(first, value)..last)
