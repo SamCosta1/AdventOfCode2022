@@ -5,7 +5,7 @@ import puzzlerunners.Puzzle
 import utils.RunMode
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any = NotStarted,
+    override val part1ExpectedAnswerForSample: Any = 2L,
     override val part2ExpectedAnswerForSample: Any = NotStarted,
     override val isComplete: Boolean = false,
 ): Puzzle {
