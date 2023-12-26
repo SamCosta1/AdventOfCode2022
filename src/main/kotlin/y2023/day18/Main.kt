@@ -27,16 +27,11 @@ class Main(
         return picks(input.sumOf { it.amount } + 4, vertices.shoelace())
     }
 
-    fun picks(pointsOnPerm: Long, innerPoints: Long) = innerPoints + (pointsOnPerm / 2) - 1
-    private fun List<Point>.shoelace(): Long {
-        var sum = 0L
-        forEachIndexed { index, p1 ->
-            val p2 = this[(index + 1) % size]
-
-            sum += (p1.x * p2.y) - (p1.y * p2.x)
-        }
-        return abs(sum / 2)
-    }
+    private fun picks(pointsOnPerm: Long, innerPoints: Long) = innerPoints + (pointsOnPerm / 2) - 1
+    private fun List<Point>.shoelace() = foldIndexed(0L) { index, acc, p1 ->
+        val p2 = this[(index + 1) % size]
+        acc + (p1.x * p2.y) - (p1.y * p2.x)
+    } / 2
 
     override fun runPart2(data: List<String>, runMode: RunMode) = calculateArea(runMode, Parser.parse(data).map {
         val amount = it.hash.dropLast(1).drop(1).toLong(radix = 16)
