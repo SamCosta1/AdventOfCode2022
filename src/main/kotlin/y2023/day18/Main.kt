@@ -14,8 +14,7 @@ class Main(
     override val part2ExpectedAnswerForSample: Any = 952408144115L,
     override val isComplete: Boolean = false,
 ) : Puzzle {
-    override fun runPart1(data: List<String>, runMode: RunMode) =
-        shoeLace(runMode, input = Parser.parse(data))// execute(runMode, Parser.parse(data))
+    override fun runPart1(data: List<String>, runMode: RunMode) = execute(runMode, Parser.parse(data))
 
     private fun execute(runMode: RunMode, input: List<Parser.InputLine>): Long {
         var currentPos = when (runMode) {
