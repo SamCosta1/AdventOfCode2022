@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("application")
@@ -25,6 +24,8 @@ dependencies {
     implementation("com.mitchtalmadge:ascii-data:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.apache.commons:commons-math3:3.6.1")
+    implementation("org.nd4j:nd4j-native-platform:1.0.0-M2.1")
+    implementation(kotlin("script-runtime"))
 
 }
 
@@ -33,18 +34,18 @@ tasks.test {
 }
 
 tasks.withType<JavaCompile>() {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+//    sourceCompatibility = "17"
+//    targetCompatibility = "17"
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "17"
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "17"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "17"
-}
+//tasks.withType<KotlinCompile>() {
+//    kotlinOptions.jvmTarget = "17"
+//}
+//val compileKotlin: KotlinCompile by tasks
+//compileKotlin.kotlinOptions {
+//    jvmTarget = "17"
+//}
+//val compileTestKotlin: KotlinCompile by tasks
+//compileTestKotlin.kotlinOptions {
+//    jvmTarget = "17"
+//}
