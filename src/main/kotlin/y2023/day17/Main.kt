@@ -5,7 +5,6 @@ import puzzlerunners.Puzzle
 import utils.MovementDirection
 import utils.Point
 import utils.RunMode
-import java.util.PriorityQueue
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 102,
@@ -19,51 +18,51 @@ class Main(
     }
 
     override fun runPart1(data: List<String>, runMode: RunMode): Int {
-
         val start = Point(0, 0)
         val end = Point(data[0].length - 1, data.lastIndex)
-        val all = data.mapIndexed { y, row -> row.mapIndexed { x, _ -> Point(x, y) } }.flatten()
+
+        // Map of Point -> Energy value
+        val rawValues = data.mapIndexed { y, row -> row.mapIndexed { x, _ -> Point(x, y) } }.flatten()
             .associateWith { data[it.y.toInt()][it.x.toInt()].toString().toInt() }
 
-        val q = mutableSetOf(
+        val queue = mutableSetOf(
             Node(start, MovementDirection.East),
             Node(start, MovementDirection.South)
         )
 
-        val dist = mutableMapOf(start to 0, start to 0)
-        val steps = mutableMapOf(q.first() to 1, q.last() to 1)
+        val dist = mutableMapOf(queue.first() to 0, queue.last() to 0)
+        val steps = mutableMapOf(queue.first() to 0, queue.last() to 0)
 
         val prev = mutableMapOf<Node, Node>()
-        var count = 0
-        while (q.isNotEmpty()) {
-            val v = q.minBy { node -> dist.getOrDefault(node.point, Int.MAX_VALUE) }
-            q.remove(v)
 
-            val distV = dist[v.point]!!
-            val adjacentNormals = v.direction.normals.map {
-                Node(v.point(it), it)
-            }
-            val adjacentInChain = v.point(v.direction).takeIf { steps[v]!! < 3 }.takeIf { all.contains(it) }
+        while (queue.isNotEmpty()) {
+            val distV = queue.minOf { node -> dist.getOrDefault(node, Int.MAX_VALUE) }
+            val v = queue.filter { dist[it] == distV }.first()
+            queue.remove(v)
 
-            if (adjacentInChain != null) {
-//                println("distv=$distV all[adjacentInChain]!!=${all[adjacentInChain]!!}")
-                if (distV + all[adjacentInChain]!! < dist.getOrDefault(adjacentInChain, Int.MAX_VALUE)) {
-                    dist[adjacentInChain] = distV + all[adjacentInChain]!!
-                    val newNode = Node(adjacentInChain, v.direction)
+            // Handle step in same direction
+            val adjacentInSameDirection =
+                v.point(v.direction).takeIf { steps[v]!! < 3 }.takeIf { rawValues.contains(it) }
+            if (adjacentInSameDirection != null) {
+                val newNode = Node(adjacentInSameDirection, v.direction)
+                if (distV + rawValues[adjacentInSameDirection]!! < dist.getOrDefault(newNode, Int.MAX_VALUE)) {
+                    dist[newNode] = distV + rawValues[adjacentInSameDirection]!!
                     steps[newNode] = steps[v]!! + 1
                     prev[newNode] = v
-                    q.add(newNode)
+                    queue.add(newNode)
                 }
             }
 
-//            println("v=$v adjacentInChain=$adjacentInChain adjacentNormals=${adjacentNormals.filter { all.contains(it.point) }}")
-            adjacentNormals.filter { all.contains(it.point) }.forEach { u ->
-                val value = all[u.point]!!
+            // Handle steps in 90 degree directions
+            val adjacentNormals = v.direction.normals.map {
+                Node(v.point(it), it)
+            }
+            adjacentNormals.filter { rawValues.contains(it.point) }.forEach { u ->
+                val value = rawValues[u.point]!!
+                if (distV + value < dist.getOrDefault(u, Int.MAX_VALUE)) {
+                    dist[u] = distV + value
 
-                if (distV + value < dist.getOrDefault(u.point, Int.MAX_VALUE)) {
-                    dist[u.point] = distV + value
-
-                    q.add(u)
+                    queue.add(u)
                     steps[u] = 1
                     prev[u] = v
                 }
@@ -72,7 +71,10 @@ class Main(
 
 
         val chain = mutableListOf<Node>()
-        var current: Node? = prev.keys.filter { it.point == end }.first()
+        val endPoints = prev.keys.filter { it.point == end }
+        println("End points $endPoints")
+
+        var current: Node? = endPoints.minBy { dist[it]!! }
         chain.add(current!!)
         while (current?.point != null) {
             current = prev[current]
@@ -94,7 +96,8 @@ class Main(
             println()
         }
         println(chain)
-        return dist[end]!!
+        println(endPoints.map { dist[it] })
+        return endPoints.minOf { dist[it]!! }
     }
 
 
