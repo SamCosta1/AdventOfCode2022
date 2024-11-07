@@ -11,7 +11,7 @@ class Main(
     override val part2ExpectedAnswerForSample: Any = NotStarted,
     override val isComplete: Boolean = false,
 ) : Puzzle {
-    data class Node(val point: Point, val direction: MovementDirection) {
+    data class Node(val point: Point, val direction: MovementDirection, val steps: Int) {
         companion object {
 //            val comparator:
         }
@@ -26,12 +26,11 @@ class Main(
             .associateWith { data[it.y.toInt()][it.x.toInt()].toString().toInt() }
 
         val queue = mutableSetOf(
-            Node(start, MovementDirection.East),
-            Node(start, MovementDirection.South)
+            Node(start, MovementDirection.East, 1),
+            Node(start, MovementDirection.South, 1)
         )
 
         val dist = mutableMapOf(queue.first() to 0, queue.last() to 0)
-        val steps = mutableMapOf(queue.first() to 0, queue.last() to 0)
 
         val prev = mutableMapOf<Node, Node>()
 
@@ -42,12 +41,11 @@ class Main(
 
             // Handle step in same direction
             val adjacentInSameDirection =
-                v.point(v.direction).takeIf { steps[v]!! < 3 }.takeIf { rawValues.contains(it) }
+                v.point(v.direction).takeIf { v.steps < 3 }.takeIf { rawValues.contains(it) }
             if (adjacentInSameDirection != null) {
-                val newNode = Node(adjacentInSameDirection, v.direction)
+                val newNode = Node(adjacentInSameDirection, v.direction, v.steps + 1)
                 if (distV + rawValues[adjacentInSameDirection]!! < dist.getOrDefault(newNode, Int.MAX_VALUE)) {
                     dist[newNode] = distV + rawValues[adjacentInSameDirection]!!
-                    steps[newNode] = steps[v]!! + 1
                     prev[newNode] = v
                     queue.add(newNode)
                 }
@@ -55,7 +53,7 @@ class Main(
 
             // Handle steps in 90 degree directions
             val adjacentNormals = v.direction.normals.map {
-                Node(v.point(it), it)
+                Node(v.point(it), it, 1)
             }
             adjacentNormals.filter { rawValues.contains(it.point) }.forEach { u ->
                 val value = rawValues[u.point]!!
@@ -63,7 +61,6 @@ class Main(
                     dist[u] = distV + value
 
                     queue.add(u)
-                    steps[u] = 1
                     prev[u] = v
                 }
             }
