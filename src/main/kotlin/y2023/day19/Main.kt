@@ -3,6 +3,8 @@ package y2023.day19
 import puzzlerunners.Puzzle
 import utils.*
 
+typealias Part2State = Map<Char, LongRange>
+
 class Main(
     override val part1ExpectedAnswerForSample: Any = 19114L,
     override val part2ExpectedAnswerForSample: Any = 167409079868000L,
@@ -74,259 +76,80 @@ class Main(
         return step.ifTrueResult.takeIf { result }
     }
 
-
-    sealed class Condition {
-        abstract val conditions: List<Condition>
-        abstract fun invert(): Condition
-        val isFlat
-            get() = when (this) {
-                is And -> conditions.none { it is And || it is Or }
-                is Or -> conditions.none { it is And || it is Or }
-                is Base -> true
-                False -> true
-                True -> true
-//                is Not -> false
-            }
-
-        data class Base(val step: Parser.WorkflowStep.Conditional) : Condition() {
-            override val conditions: List<Condition>
-                get() = listOf(this)
-
-            override fun toString(): String {
-                return "${step.subject}${step.operation.raw}${step.valueToCompare}"
-            }
-
-            override fun invert() = Base(step.invert!!)
-        }
-
-        data class Or(override val conditions: List<Condition>) : Condition() {
-            override fun toString(): String {
-                return "(${conditions.joinToString(" | ")})"
-            }
-
-            override fun invert() = And(conditions.map { it.invert() })
-        }
-
-        data class And(override val conditions: List<Condition>) : Condition() {
-            override fun toString(): String {
-                return "(${conditions.joinToString(" & ")})"
-            }
-
-            override fun invert() = Or(conditions.map { it.invert() })
-        }
-
-//        data class Not(val condition: Condition) : Condition() {
-//            override val conditions: List<Condition>
-//                get() = listOf(this)
-//
-//            override fun invert() = condition
-//
-//            override fun toString(): String {
-//                return "NOT($condition)"
-//            }
-//        }
-
-        data object True : Condition() {
-            override val conditions: List<Condition>
-                get() = listOf(this)
-
-            override fun toString(): String {
-                return "T"
-            }
-
-            override fun invert() = False
-
-        }
-
-        data object False : Condition() {
-            override val conditions: List<Condition>
-                get() = listOf(this)
-
-            override fun toString(): String {
-                return "F"
-            }
-
-            override fun invert(): Condition = True
-        }
-    }
-
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).workflows.let { workflows ->
-        val followResults = mutableListOf<List<Parser.WorkflowStep.Conditional>>()
-        follow("in", workflows, emptyList(), followResults)
-
-        val ranges = followResults.map { steps ->
-            val ranges = mutableMapOf(
-                's' to (1..4000L),
-                'x' to (1..4000L),
-                'a' to (1..4000L),
-                'm' to (1..4000L),
-            )
-
-            steps.forEach { step ->
-                val current = ranges[step.subject]!!
-                ranges[step.subject] = when (step.operation) {
-                    Parser.Operation.LessThan -> current.coerceAtMost(step.valueToCompare - 1)
-                    Parser.Operation.LessThanOrEqual -> current.coerceAtMost(step.valueToCompare)
-                    Parser.Operation.GreaterThan -> current.coerceAtLeast(step.valueToCompare + 1)
-                    Parser.Operation.GreaterThanOrEqual -> current.coerceAtLeast(step.valueToCompare)
-                }
-            }
-            ranges
-        }
-
-//        ranges.forEach { println(it) }
-        val results = mapOf(
-            's' to mutableSetOf<Long>(),
-            'x' to mutableSetOf<Long>(),
-            'a' to mutableSetOf<Long>(),
-            'm' to mutableSetOf<Long>(),
+        val ranges = mapOf(
+            'x' to 1..4000L,
+            'm' to 1..4000L,
+            'a' to 1..4000L,
+            's' to 1..4000L,
         )
+        println(listOf(1..4000).first().count())
 
-        var total: Long = 0
+        run(ranges, workflows, listOf("in"), "in")
 
-        ranges.forEach { entry: MutableMap<Char, LongRange> ->
-
-            val distinctSizes = mutableMapOf<Char, Int>()
-            entry.forEach { mapEntry ->
-                val map = results[mapEntry.key]!!
-
-                val distinctSize = mapEntry.value.toMutableSet().apply { removeAll(map) }.size
-
-//                println("Distinct size $distinctSize for $mapEntry")
-                distinctSizes[mapEntry.key] = distinctSize
-                mapEntry.value.forEach { map.add(it) }
-            }
-
-            println("Distinct Sizes: $distinctSizes")
-            if (distinctSizes.none { it.value == 0 }) {
-                total += distinctSizes.values.productOfLong { it.toLong() }
-            } else {
-                distinctSizes.filter { it.value != 0 }.forEach { (label, value) ->
-                    var partialResult = value.toLong()
-                    entry.filter { it.key != label }.forEach {
-                        partialResult *= it.value.count()
-                    }
-                    total += partialResult
-                    println("Label $label $value partial: $partialResult")
-                }
-            }
-
-            total++
-        }
-
-
-        total
-
+        println(validRanges.take(3).joinToString("\n"))
+        postProcess('x', target = validRanges.take(3))
     }
-//    {s=1..1350, x=1..1415,    a=1..2005, m=1..4000}
-//    {s=1..1350, x=1400..4000, a=1..2005, m=1..4000}
 
-    val finishStates = setOf("A", "R")
-    private fun follow(
-        workflowName: WorkflowName,
+    val subjects = listOf('x', 'm', 'a', 's')
+    fun postProcess(subject: Char, target: List<Part2State>): Long {
+        if (subject == subjects.last()) {
+            val numbers = mutableSetOf<Long>()
+            target.map { it[subject]!! }.forEach { range ->
+                range.forEach { numbers.add(it) }
+            }
+
+            println("s|${target.map { it[subject]!! }}")
+            return numbers.size.toLong()
+        }
+        val subjectRanges =
+            target.asSequence().map { it[subject]!! }.map { listOf(it.first, it.last) }.flatten().toSet().sorted()
+
+        val rangesToIterate = mutableListOf<LongRange>()
+
+        subjectRanges.forEachIndexed { index, l ->
+            if (index != subjectRanges.lastIndex) {
+                rangesToIterate.add(l..subjectRanges[index + 1])
+            }
+        }
+        return rangesToIterate.sumOf { range ->
+            val resultsToCheck = target.filter { it[subject]!!.contains(range) }
+            val a = range.count() * postProcess(subjects[subjects.indexOf(subject) + 1], resultsToCheck)
+            println("$subject| ${range} | $a")
+            a
+        }
+    }
+
+    var validRanges = mutableListOf<Part2State>()
+    fun run(
+        ranges: Part2State,
         workflows: Map<WorkflowName, List<Parser.WorkflowStep>>,
-        currentChain: List<Parser.WorkflowStep.Conditional>,
-        results: MutableList<List<Parser.WorkflowStep.Conditional>>
+        chain: List<WorkflowName>,
+        nextWorkflow: WorkflowName
     ) {
-        if (workflowName == "R") {
-//            println("Rejecting: $currentChain")
+        // This combo is a dud
+        if (nextWorkflow == "R") {
             return
         }
 
-        if (workflowName == "A") {
-            println("Accepting: $currentChain")
-            results.add(currentChain)
+        if (nextWorkflow == "A") {
+            validRanges.add(ranges)
             return
         }
 
-        val workflow = workflows[workflowName]!!
-        val inverts = workflow.mapNotNull { it.invert }
-
-        workflow.forEachIndexed { index, step ->
+        var currentRanges = ranges
+        for (step in workflows[nextWorkflow]!!) {
             when (step) {
                 is Parser.WorkflowStep.Conditional -> {
-                    follow(
-                        step.ifTrueResult,
-                        workflows,
-                        currentChain + inverts.take(index) + step,
-                        results
-                    )
+                    val subRanges = step.applyToRanges(currentRanges)
+                    currentRanges = step.invert.applyToRanges(currentRanges)
+                    run(subRanges, workflows, chain + nextWorkflow, step.ifTrueResult)
                 }
 
-                is Parser.WorkflowStep.Default -> {
-                    follow(
-                        step.defaultResult,
-                        workflows,
-                        currentChain + inverts.take(index),
-                        results
-                    )
-                }
+                is Parser.WorkflowStep.Default -> run(ranges, workflows, chain + nextWorkflow, step.defaultResult)
             }
-
         }
-
     }
-
-    private fun flatten(expression: Condition): List<Condition> {
-
-        return when (expression) {
-            is Condition.And -> {
-                if (expression.conditions.any { it == Condition.False }) {
-                    emptyList<Condition>()
-                }
-
-                val noTrues = expression.conditions.filterNot { it == Condition.True }
-                val thingsToAnd = noTrues.mapNotNull { it as? Condition.Base } + noTrues.mapNotNull { condition ->
-                    (condition as? Condition.And)?.conditions
-                }.flatten()
-
-                if (thingsToAnd.size == noTrues.size) {
-                    return listOf(Condition.And(thingsToAnd))
-                } else {
-                    val ors = noTrues.mapNotNull { it as? Condition.Or }
-                    ors.map { Condition.And(thingsToAnd + it.conditions) }.also {
-                        println("ORS | $it")
-                    }
-                }
-            }
-
-            is Condition.Or -> expression.conditions.map { flatten(it) }.flatten().filterNot { it == Condition.False }
-            is Condition.Base,
-            Condition.True,
-            Condition.False -> expression.conditions
-//            is Condition.Not -> expression.conditions
-        }
-
-
-    }
-
-    private fun process(
-        workflowName: WorkflowName,
-        workflows: Map<WorkflowName, List<Parser.WorkflowStep>>
-    ): Condition {
-        if (workflowName == "A") {
-            return Condition.True
-        } else if (workflowName == "R") {
-            return Condition.False
-        }
-        val workflow = workflows[workflowName]!!
-
-        val inverts = workflow.mapNotNull { it.invert }.map { Condition.Base(it) }
-        val ors = workflow.mapIndexed { index, step ->
-            Condition.And(
-                inverts.take(index) + when (step) {
-                    is Parser.WorkflowStep.Conditional -> listOf(
-                        Condition.Base(step),
-                        process(step.ifTrueResult, workflows)
-                    )
-
-                    is Parser.WorkflowStep.Default -> listOf(process(step.defaultResult, workflows))
-                }
-            )
-        }
-        return Condition.Or(ors)
-    }
-
-
 }
 
+fun LongRange.contains(other: LongRange) = first <= other.first && last >= other.last

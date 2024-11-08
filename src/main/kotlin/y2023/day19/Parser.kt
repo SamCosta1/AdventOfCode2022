@@ -1,5 +1,8 @@
 package y2023.day19
 
+import utils.coerceAtLeast
+import utils.coerceAtMost
+
 typealias WorkflowName = String
 
 object Parser {
@@ -13,17 +16,7 @@ object Parser {
     }
 
     sealed class WorkflowStep {
-        val invert: WorkflowStep.Conditional?
-            get() = when (this) {
-                is Conditional -> when (operation) {
-                    Operation.LessThan -> copy(operation = Operation.GreaterThanOrEqual)
-                    Operation.LessThanOrEqual -> copy(operation = Operation.GreaterThan)
-                    Operation.GreaterThan -> copy(operation = Operation.LessThanOrEqual)
-                    Operation.GreaterThanOrEqual -> copy(operation = Operation.LessThan)
-                }
 
-                is Default -> null
-            }
 
         data class Conditional(
             val subject: Char,
@@ -31,6 +24,27 @@ object Parser {
             val ifTrueResult: String,
             val valueToCompare: Long
         ) : WorkflowStep() {
+            fun applyToRanges(state: Part2State): Part2State {
+                val newMap = state.toMutableMap()
+                newMap[subject] = newMap[subject]!!.let { range ->
+                    when (operation) {
+                        Operation.LessThan -> range.coerceAtMost(valueToCompare - 1)
+                        Operation.GreaterThan -> range.coerceAtLeast(valueToCompare + 1)
+                        Operation.LessThanOrEqual -> range.coerceAtMost(valueToCompare)
+                        Operation.GreaterThanOrEqual -> range.coerceAtLeast(valueToCompare)
+                    }
+                }
+                return newMap
+            }
+
+            val invert: WorkflowStep.Conditional
+                get() = when (operation) {
+                    Operation.LessThan -> copy(operation = Operation.GreaterThanOrEqual)
+                    Operation.LessThanOrEqual -> copy(operation = Operation.GreaterThan)
+                    Operation.GreaterThan -> copy(operation = Operation.LessThanOrEqual)
+                    Operation.GreaterThanOrEqual -> copy(operation = Operation.LessThan)
+                }
+
             override fun toString(): String {
                 return "{$subject${operation.raw}$valueToCompare}->$ifTrueResult"
             }

@@ -40,7 +40,9 @@ data class DayResults(
     ).sumOf { it.runtime }
 }
 data class ExecutionResult(val solution: Any?, val runtime: Long) {
-    fun formatRuntime(): String = decimalFormatter.format(runtime / 1000_000.0) + "ms"
+    fun formatRuntime(): String = decimalFormatter.format(runtime / 1000_000.0) + "ms ${
+        if (runtime > 1000) "(" + decimalFormatter.format(runtime / 1000_000_000) + "s)" else ""
+    }"
     companion object {
         val decimalFormatter = DecimalFormat("#.###");
     }

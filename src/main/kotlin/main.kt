@@ -9,6 +9,6 @@ import kotlin.system.measureTimeMillis
 fun main() {
 //    Main2021.runAll()
 //    Main2022.executeSmort()
-    println(AsciiTableGenerator.formatInProgress(Main2023.run(17)))
+    println(AsciiTableGenerator.formatInProgress(Main2023.run(19)))
 
 }
