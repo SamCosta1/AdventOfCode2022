@@ -12,15 +12,7 @@ class Main(
 ) : Puzzle {
 
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
-        val ranges = mapOf(
-            'x' to 1..4000L,
-            'm' to 1..4000L,
-            'a' to 1..4000L,
-            's' to 1..4000L,
-        )
-        val validRanges = mutableListOf<Part2State>()
-        computeValidRangesRecursive(validRanges, ranges, info.workflows, listOf(), "in")
-
+        val validRanges = info.computeValidRanges()
         info.parts.filter { part ->
             validRanges.any {
                 it['x']!!.contains(part.x)
@@ -31,18 +23,8 @@ class Main(
         }.sumOf { it.sum() }
     }
 
-    override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).workflows.let { workflows ->
-        val ranges = mapOf(
-            'x' to 1..4000L,
-            'm' to 1..4000L,
-            'a' to 1..4000L,
-            's' to 1..4000L,
-        )
-
-        val validRanges = mutableListOf<Part2State>()
-        computeValidRangesRecursive(validRanges, ranges, workflows, listOf("in"), "in")
-
-        validRanges.sumOf { range ->
+    override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
+        info.computeValidRanges().sumOf { range ->
             range.values.productOfLong { it.count().toLong() }
         }
     }
@@ -87,6 +69,5 @@ class Main(
                 }
             }
         }
-
     }
 }
