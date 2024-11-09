@@ -4,20 +4,27 @@ object Parser {
     sealed class Module {
         abstract val label: String
         abstract val outputs: Sequence<String>
+        abstract val char: Char
         data class FlipFlop(
             override val label: String,
             var value: Boolean = false,
             override val outputs: Sequence<String>
-        ): Module()
+        ): Module() {
+            override val char: Char
+                get() = '%'
+        }
         data class Conjunction(
             override val label: String,
             var inputValues: MutableMap<String, Boolean>,
             override val outputs: Sequence<String>
-        ): Module()
+        ): Module() {
+            override val char: Char
+                get() = '&'
+        }
 
-        data class Broadcaster(override val outputs: Sequence<String>): Module() {
-            override val label: String
-                get() = "broadcaster"
+        data class Broadcaster(override val label: String = "broadcaster", override val outputs: Sequence<String>): Module() {
+            override val char: Char
+                get() = ' '
         }
 
     }
@@ -27,7 +34,7 @@ object Parser {
             val outputs = split.last().trim().split(", ").asSequence()
             val start = split.first().trim()
             if (row.startsWith("broadcaster")) {
-                Module.Broadcaster(outputs)
+                Module.Broadcaster(outputs = outputs)
             } else if (row.startsWith("%")) {
                 Module.FlipFlop(start.removePrefix("%"), outputs = outputs)
             } else if (!start.startsWith("&")) {
