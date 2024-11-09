@@ -6,7 +6,9 @@ import utils.coerceAtMost
 typealias WorkflowName = String
 
 object Parser {
-    data class Part(val x: Long, val m: Long, val a: Long, val s: Long)
+    data class Part(val x: Long, val m: Long, val a: Long, val s: Long) {
+        fun sum() = x + m + a + s
+    }
 
     enum class Operation(val raw: String) {
         LessThan("<"),
@@ -37,6 +39,20 @@ object Parser {
                 return newMap
             }
 
+            fun excludeFromRanges(state: Part2State): Part2State {
+                val newMap = state.toMutableMap()
+                newMap[subject] = newMap[subject]!!.let { range ->
+                    when (operation) {
+                        Operation.LessThan -> range.coerceAtLeast(valueToCompare )
+                        Operation.GreaterThan -> range.coerceAtMost(valueToCompare)
+//                        Operation.LessThanOrEqual -> range.coerceAtMost(valueToCompare)
+//                        Operation.GreaterThanOrEqual -> range.coerceAtLeast(valueToCompare)
+                        else -> throw Exception()
+                    }
+                }
+                return newMap
+            }
+
             val invert: WorkflowStep.Conditional
                 get() = when (operation) {
                     Operation.LessThan -> copy(operation = Operation.GreaterThanOrEqual)
@@ -46,13 +62,13 @@ object Parser {
                 }
 
             override fun toString(): String {
-                return "{$subject${operation.raw}$valueToCompare}->$ifTrueResult"
+                return "$subject${operation.raw}$valueToCompare:$ifTrueResult"
             }
         }
 
         data class Default(val defaultResult: WorkflowName) : WorkflowStep() {
             override fun toString(): String {
-                return "{$defaultResult}"
+                return defaultResult
             }
         }
     }
