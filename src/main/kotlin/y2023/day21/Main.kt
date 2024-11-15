@@ -2,21 +2,27 @@ package y2023.day21
 
 import puzzlerunners.NotStarted
 import puzzlerunners.Puzzle
+import utils.GenericGrid
+import utils.Point
 import utils.RunMode
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 16,
-    override val part2ExpectedAnswerForSample: Any = NotStarted,
+    override val part2ExpectedAnswerForSample: Any = 16733044,
     override val isComplete: Boolean = false,
 ): Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { (start, grid) ->
-        val gardenPlots = grid.points.filter { it.value == Parser.Plot.Garden }
-        val dist = gardenPlots.keys.associateWith { Int.MAX_VALUE }.toMutableMap()
 
         val numSteps = when(runMode) {
             RunMode.Sample -> 6
             RunMode.Real -> 64
         }
+        computePossibleEndSquares(grid, start, numSteps)
+    }
+
+    private fun computePossibleEndSquares(grid: GenericGrid<Parser.Plot>, start: Point, numSteps: Int): Int {
+        val gardenPlots = grid.points.filter { it.value == Parser.Plot.Garden }
+        val dist = gardenPlots.keys.associateWith { Int.MAX_VALUE }.toMutableMap()
         dist[start] = 0
         val q = gardenPlots.keys.toMutableList()
 
@@ -35,9 +41,17 @@ class Main(
             }
         }
 
-        dist.count {
+        return dist.count {
             it.value == numSteps || (it.value < numSteps && (numSteps - it.value) % 2 == 0)
         }
     }
-    override fun runPart2(data: List<String>, runMode: RunMode): Any = ""
+
+    override fun runPart2(data: List<String>, runMode: RunMode): Any {
+        val numSteps = when(runMode) {
+            RunMode.Sample -> 5000
+            RunMode.Real -> 26501365
+        }
+
+        return Unit
+    }
 }
