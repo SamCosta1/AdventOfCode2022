@@ -4,7 +4,7 @@ import y2023.day14.Parser
 import kotlin.math.max
 import kotlin.math.min
 
-class GenericGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
+open class GenericGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
     interface GenericGridItem {
         val char: String
     }
@@ -14,8 +14,10 @@ class GenericGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
     var bottomRightMostPoint = Point(Long.MIN_VALUE + 3, Long.MIN_VALUE + 3)
     var printBuffer = 0
 
-    operator fun get(point: Point) = points.getOrDefault(point, defaultItem)
-    operator fun get(x: Long, y: Long) = points.getOrDefault(Point(x, y), defaultItem)
+    open operator fun get(point: Point): Item {
+        return points.getOrDefault(point, defaultItem)
+    }
+    operator fun get(x: Long, y: Long) = get(Point(x, y))
     operator fun set(x: Long, y: Long, item: Item) = set(Point(x, y), item)
     operator fun set(x: Int, y: Int, item: Item) = set(Point(x.toLong(), y.toLong()), item)
     operator fun set(point: Point, item: Item) {
