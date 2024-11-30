@@ -12,7 +12,7 @@ class Main(
 ) : Puzzle {
     data class Node(val point: Point, val direction: MovementDirection, val steps: Int)
 
-    override fun runPart1(data: List<String>, runMode: RunMode): Int = calculateShortestPath(minSteps = 1, maxSteps = 3, data)
+    override fun runPart1(data: List<String>, runMode: RunMode) = Unit//calculateShortestPath(minSteps = 1, maxSteps = 3, data)
 
     private fun calculateShortestPath(minSteps: Int, maxSteps: Int, data: List<String>): Int {
         val start = Point(0, 0)
@@ -81,6 +81,5 @@ class Main(
         return endPoints.minOf { dist[it]!! }
     }
 
-
-    override fun runPart2(data: List<String>, runMode: RunMode) = calculateShortestPath(minSteps = 4, maxSteps = 10, data)
+    override fun runPart2(data: List<String>, runMode: RunMode) = Unit//calculateShortestPath(minSteps = 4, maxSteps = 10, data)
 }

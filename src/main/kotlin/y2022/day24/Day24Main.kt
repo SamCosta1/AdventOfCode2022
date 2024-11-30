@@ -33,8 +33,6 @@ class Day24Main(val file: String) {
             }
         }
 
-        println("Fewest mins = $currentMinute")
-
         return currentMinute
     }
 

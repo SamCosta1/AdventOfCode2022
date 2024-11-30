@@ -299,9 +299,9 @@ class Main(
 
     val mutex = Mutex()
     override fun runPart2(data: List<String>, runMode: RunMode): Long {
-//        if (runMode != RunMode.Sample) {
-//            return 0L
-//        }
+        if (runMode != RunMode.Sample) {
+            return 0L
+        }
         val parsed = Parser.parsePart2(data)
         // // // println(parsed.size)
         var count = 0L
@@ -313,7 +313,6 @@ class Main(
                             countArrangements(entry).also {
                                 mutex.withLock {
                                     total += it
-                                    println("Count $it ${count++}")
                                 }
                             }
                         }

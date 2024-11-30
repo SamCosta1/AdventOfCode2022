@@ -25,9 +25,7 @@ class Main(
             24,
             State(mapOf(Resource.Ore to 1, Resource.Clay to 0, Resource.Obsidian to 0, Resource.Geode to 0)),
             blueprint
-        ).also {
-            println("Blueprint ${blueprint.name}  $it")
-        }.resourceCount[Resource.Geode]!! * blueprint.name
+        ).resourceCount[Resource.Geode]!! * blueprint.name
     }
 
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).take(3).productOf { blueprint ->
@@ -35,9 +33,7 @@ class Main(
             32,
             State(mapOf(Resource.Ore to 1, Resource.Clay to 0, Resource.Obsidian to 0, Resource.Geode to 0)),
             blueprint
-        ).also {
-            println("Blueprint ${blueprint.name}  $it")
-        }.resourceCount[Resource.Geode]!!
+        ).resourceCount[Resource.Geode]!!
     }
 
     private fun computeLargestNumberOfGeodesPossible(timeLimit: Int, startState: State, blueprint: Blueprint): State {

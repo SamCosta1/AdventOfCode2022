@@ -34,6 +34,8 @@ object AsciiTableGenerator {
             }
         }
 
+        println(yearResults)
+        println(yearResults.days)
         yearResults.days.filter { it.isComplete }.forEach { dayResults ->
             row {
                 cell(dayResults.day) {

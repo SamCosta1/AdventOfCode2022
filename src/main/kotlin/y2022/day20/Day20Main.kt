@@ -10,7 +10,6 @@ class Day20Main(file: String) {
         val indiciesOfInterest = listOf(1000, 2000, 3000)
 
         val sequence = LinkedList(data)
-        println("    " + sequence.values())
         data.forEach { entry ->
             if (entry.value != 0L) {
                 val currentIndex = sequence.indexOf(entry)
@@ -23,7 +22,6 @@ class Day20Main(file: String) {
 
         val zeroIndex = sequence.indexOfFirst { it.value == 0L }
         return indiciesOfInterest.sumOf {
-            println("$it = ${sequence.get((zeroIndex + it) % sequence.size)}")
             sequence[(zeroIndex + it) % sequence.size].value
         }
     }
@@ -48,7 +46,6 @@ class Day20Main(file: String) {
 
         val zeroIndex = sequence.indexOfFirst { it.value == 0L }
         return indiciesOfInterest.sumOf {
-            println("$it = ${sequence.get((zeroIndex + it) % sequence.size)}")
             sequence[(zeroIndex + it) % sequence.size].value
         }
     }

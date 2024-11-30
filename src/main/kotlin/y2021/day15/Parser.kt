@@ -8,7 +8,6 @@ class Grid(val width: Int, val height: Int) {
     override fun toString() = buildString {
         (0L until height).forEach { y ->
             (0L until width).forEach { x ->
-                println("" + Point(x, y) + "  " + points[Point(x, y)])
                 append(points[Point(x, y)]!!)
             }
             appendLine()

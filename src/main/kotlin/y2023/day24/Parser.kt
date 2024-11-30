@@ -4,7 +4,11 @@ import utils.Point3D
 import utils.getAlphabetLetter
 
 object Parser {
-    data class HailStone(val label: String, val pos: Point3D, val velocity: Point3D)
+    data class HailStone(val label: String, val pos: Point3D, val velocity: Point3D) {
+        override fun toString(): String {
+            return "${pos.x}, ${pos.y}, ${pos.z}, @ ${velocity.x}, ${velocity.y}, ${velocity.z}"
+        }
+    }
     fun parse(data: List<String>) = data.mapIndexed { index, row ->
         val split = row.split(" @ ").map { section ->
             section.split(", ").map { it.trim().toLong() }

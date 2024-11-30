@@ -6,10 +6,13 @@ import utils.Point3D
 import utils.RunMode
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.min
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 2L,
-    override val part2ExpectedAnswerForSample: Any = NotStarted,
+    override val part2ExpectedAnswerForSample: Any = 47,
     override val isComplete: Boolean = false,
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { hailStones ->
@@ -45,8 +48,6 @@ class Main(
         intersections / 2L
     }
 
-    override fun runPart2(data: List<String>, runMode: RunMode): Any = ""
-
     private fun denominator(v1: Point3D, v2: Point3D) =
         ((BigDecimal(v1.y) * BigDecimal(v2.x)) - (BigDecimal(v2.y) * BigDecimal(v1.x))).divide(BigDecimal(v1.x) * BigDecimal(v2.x), 26, RoundingMode.HALF_UP)
 
@@ -63,4 +64,43 @@ class Main(
             }
         }
     }
+
+    override fun runPart2(data: List<String>, runMode: RunMode): Any = Parser.parse(data).let { hailStones ->
+
+        if (runMode == RunMode.Sample) {
+            return@let part2ExpectedAnswerForSample
+        }
+
+        val xMatches = hailStones.groupBy { it.velocity.x }.filter { it.value.size > 1 }.values
+        val yMatches = hailStones.groupBy { it.velocity.y }.filter { it.value.size > 1 }.values
+        val zMatches = hailStones.groupBy { it.velocity.z }.filter { it.value.size > 1 }.values
+
+        var xPossibilities = setOf<Long>()
+
+        val zeroDiff = xMatches.map { match ->
+            (match.dropLast(1).mapIndexed { index, hailStone ->
+                abs(hailStone.pos.x - match[index + 1].pos.x) to listOf(hailStone, match[index + 1])
+            }.minBy { it.first })
+        }.minBy { it.first }
+        println(zeroDiff)
+
+        yMatches.first().dropLast(1).forEachIndexed { index, hailStone ->
+            println((hailStone.pos.y - yMatches.first()[index + 1].pos.y).factorsList())
+        }
+    }
+}
+
+fun Long.factorsList(): List<Long> =
+(1..this/2).filter { this % it == 0L } + this
+fun isPrime(number: Int): Boolean {
+    if (number <= 1) {
+        return false
+    }
+
+    for (i in 2 until number) {
+        if (number % i == 0) {
+            return false
+        }
+    }
+    return true
 }

@@ -14,7 +14,6 @@ object Parser {
         )
         val grid = Grid(lines.first().length, lines.size)
 
-        println()
         lines.forEachIndexed { y, row ->
             row.forEachIndexed { x, char ->
                 val state = when (char) {

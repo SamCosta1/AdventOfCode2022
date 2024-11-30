@@ -26,10 +26,10 @@ data class YearResults(
 )
 
 data class DayResults(
-    val part1Sample: ExecutionResult,
-    val part1Real: ExecutionResult? = null,
-    val part2Sample: ExecutionResult? = null,
-    val part2Real: ExecutionResult? = null,
+    val part1Sample: ExecutionResult<Any>,
+    val part1Real: ExecutionResult<Any>? = null,
+    val part2Sample: ExecutionResult<Any>? = null,
+    val part2Real: ExecutionResult<Any>? = null,
     val day: Int,
     val year: Int,
     val puzzle: Puzzle
@@ -39,10 +39,10 @@ data class DayResults(
         part1Sample,part1Real,part2Sample,part2Real
     ).sumOf { it.runtime }
 }
-data class ExecutionResult(val solution: Any?, val runtime: Long) {
-    fun formatRuntime(): String = decimalFormatter.format(runtime / 1000_000.0) + "ms ${
+data class ExecutionResult<T>(val solution: T?, val runtime: Long) {
+    fun formatRuntime(): String = (decimalFormatter.format(runtime / 1000_000.0) + "ms ${
         if (runtime > 1000) "(" + decimalFormatter.format(runtime / 1000_000_000) + "s)" else ""
-    }"
+    }").takeUnless { solution == Unit } ?: "DNF"
     companion object {
         val decimalFormatter = DecimalFormat("#.###");
     }

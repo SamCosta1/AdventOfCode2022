@@ -92,17 +92,7 @@ class Day22Main(val file: String) {
         }
 
 
-        return run(data, Surface.Cube(size)).also {
-            println("Teleports $count")
-            println("Column Metas:")
-            columnMetaUsed.forEach {
-                println("${it.value.coord} ${it.value.firstTeleport} ${it.value.lastTeleport}")
-            }
-            println("Row Metas:")
-            rowMetaUsed.forEach {
-                println(it)
-            }
-        }
+        return run(data, Surface.Cube(size))
     }
 
     fun run(data: Data = Parser.parse(file), surface: Surface = Surface.FlatMap): Long {
@@ -121,7 +111,6 @@ class Day22Main(val file: String) {
         }
 
 //        println(grid)
-        println("Final position " + currentPosition)
         return (1000 * currentPosition.y) + (4 * currentPosition.x) + when (currentDirection) {
             Direction.Right -> 0
             Direction.Down -> 1

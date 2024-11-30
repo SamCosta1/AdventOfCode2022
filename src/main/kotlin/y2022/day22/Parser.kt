@@ -62,7 +62,6 @@ object Parser {
                 grid[Point(x + 1L, y + 1L)] = Grid.State.from(char)
             }
         }
-        println(grid.points.size)
     }
 
 

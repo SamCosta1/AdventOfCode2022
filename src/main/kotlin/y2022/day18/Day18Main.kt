@@ -28,7 +28,6 @@ class Day18Main(file: String) {
     fun runPart2(): Int {
 
 
-        println("minX=$minX, mxX=$maxX, minY=$minY maxY=$maxY minZ=$minZ maxZ=$maxZ cubeSetSize: ${data.size}")
 
         val outerAir = mutableSetOf<Cube>()
 
@@ -38,8 +37,6 @@ class Day18Main(file: String) {
         }
 
         buildOuterAirSet(searchStart, outerAir)
-
-        println("Outer air: " + outerAir.size)
 
 
         return data.sumBy { cube ->

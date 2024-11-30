@@ -14,10 +14,13 @@ interface YearOfPuzzles {
 
     fun runAll() = runTimedNew {
         puzzles.mapIndexed { index, puzzle ->
-            puzzle.run(index + 1, year)
+            puzzle.run(index + 1, year).also {
+
+            println("Finished ${index + 1}")
+            }
         }
     }.let {
-        YearResults(it.solution as List<DayResults>, it.runtime, year)
+        YearResults(it.solution ?: emptyList(), it.runtime, year)
     }
 
     fun runLatest() = puzzles.indexOfLast { it.part1ExpectedAnswerForSample != NotStarted }.let {

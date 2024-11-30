@@ -49,13 +49,8 @@ class Main(
             current = possibleNextPoints.first()
             soFar.add(current)
             if (current == endPoint) {
-//                val newGrid = grid.copy()
-//                soFar.forEach {
-//                    newGrid.addAll(soFar, Parser.HikeCell.Path)
-//                }
                 if (maxSoFar < soFar.size - 1) {
                     maxSoFar = soFar.size - 1
-                    println(maxSoFar)
                 }
                 return soFar.size - 1
             }
@@ -159,7 +154,6 @@ class Main(
             endNode.edges = listOf(this)
         }
 
-        println(startNode.edges.first().points.size)
         search(startNode, setOf(startNode), endNode)
 
         routes.map { it.toList() }.maxOf { path ->

@@ -24,8 +24,8 @@ internal fun runTimed(repeats: Int = 1, block: () -> Any): String {
 }
 
 fun Long.formatTimeMs() = "${String.format("%05d", this)}ms"
-fun runTimedNew(repeats: Int = 1, block: () -> Any): ExecutionResult {
-    var answer: Any? = null
+fun <T> runTimedNew(repeats: Int = 1, block: () -> T): ExecutionResult<T> {
+    var answer: T? = null
     val time = measureNanoTime {
         repeat(repeats) {
             answer = block()

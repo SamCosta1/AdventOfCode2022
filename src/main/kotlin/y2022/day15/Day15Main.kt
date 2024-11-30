@@ -45,11 +45,8 @@ class Day15Main(val file: String) {
                     }
                 }
             }
-
-            println("Added pair $index")
         }
 
-        println(grid)
         return grid
     }
 
@@ -68,9 +65,7 @@ class Day15Main(val file: String) {
                 checks++
                 !sensorOrBeacon && other
             }
-        }.count().also {
-            println("Total checks run0 $checks")
-        }
+        }.count()
 
     }
 
@@ -107,7 +102,6 @@ class Day15Main(val file: String) {
             }
         }
 
-        println("Total Checks Run2 $checks")
         return points.size
     }
 

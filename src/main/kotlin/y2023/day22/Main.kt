@@ -19,9 +19,6 @@ class Main(
                 grid[it] = Parser.GridItem.Air
             }
             blocks.filter { it != block }.all { grid.isSettled(it) }.also {
-                if (it) {
-                    println(block)
-                }
                 block.points.forEach {
                     grid[it] = block
                 }
@@ -46,7 +43,7 @@ class Main(
         }
     }
 
-    override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { (blocks, grid) ->
+    override fun runPart2(data: List<String>, runMode: RunMode) = Unit /*Parser.parse(data).let { (blocks, grid) ->
         simulateFalling(blocks, grid)
 
         blocks.sumOf { block ->
@@ -67,7 +64,7 @@ class Main(
             }.sum()
         }
     }
-
+*/
     fun Generic3dGrid<Parser.GridItem>.isSettled(block: Parser.GridItem.Block): Boolean {
         val comparisonBlocks = if (block.isVertical) listOf(block.points.minBy { it.z }) else block.points
         return comparisonBlocks.any {
