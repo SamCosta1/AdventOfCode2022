@@ -1,10 +1,11 @@
 package y2023.day1
 
+import puzzlerunners.NotStarted
 import puzzlerunners.Puzzle
 import utils.RunMode
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any = 142,
+    override val part1ExpectedAnswerForSample: Any = NotStarted,
     override val part2ExpectedAnswerForSample: Any = 281,
     override val isComplete: Boolean = true
 ): Puzzle {

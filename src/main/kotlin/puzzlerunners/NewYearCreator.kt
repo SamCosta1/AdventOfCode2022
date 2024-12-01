@@ -6,11 +6,11 @@ import java.nio.file.Paths
 object NewYearCreator {
 
     fun run(year: Int) {
-//        createDays(year)
+        createDays(year)
         Files.write(
             Paths.get(
                 System.getProperty("user.dir"),
-                "src/main/kotlin/y$year/Main2023.kt"
+                "src/main/kotlin/y$year/Main${year}.kt"
             ),
             yearMain(year).lines()
         )
@@ -32,12 +32,14 @@ object NewYearCreator {
                 """
     package y$year.day$it
     
-    import utils.Puzzle
+    import puzzlerunners.Puzzle
+    import puzzlerunners.NotStarted
     import utils.RunMode
     
     class Main(
-        override val part1ExpectedAnswerForSample: Any,
-        override val part2ExpectedAnswerForSample: Any
+        override val part1ExpectedAnswerForSample: Any = NotStarted,
+        override val part2ExpectedAnswerForSample: Any = NotStarted,
+        override val isComplete: Boolean = true
     ): Puzzle {
         override fun runPart1(data: List<String>, runMode: RunMode): Any = ""
         override fun runPart2(data: List<String>, runMode: RunMode): Any = ""
@@ -65,40 +67,25 @@ object NewYearCreator {
 
 fun yearMain(year: Int) = buildString {
     append("""
-        package y2023
+        package y$year
 
-        import utils.NotStarted
-        import utils.run
-        import kotlin.system.measureTimeMillis
+        import puzzlerunners.YearOfPuzzles
 
 
-        object Main$year {
-        
-            val puzzles = listOf(""".trimIndent()
+        object Main$year: YearOfPuzzles {
+            override val year = $year
+            override val puzzles = listOf(""".trimIndent()
     )
 
 
     appendLine()
     (1..25).forEach {
         appendLine(
-            "        y$year.day$it.Main(NotStarted, NotStarted),"
+            "        y$year.day$it.Main(),"
         )
     }
     append("""
         )
-        
-            fun runAll() = measureTimeMillis { 
-                puzzles.forEachIndexed { index, puzzle ->
-                  puzzle.run(index + 1, $year)
-                }
-            }.let {
-               println()
-               println("Total Time: ${"$"}{it}ms")
-            }
-            
-            fun runLatest() = puzzles.indexOfLast { it.part1ExpectedAnswerForSample != NotStarted }.let {
-                puzzles[it].run(it + 1, $year)
-            }
-        }
+     }
     """.trimIndent())
 }

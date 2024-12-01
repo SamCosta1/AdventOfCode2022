@@ -5,6 +5,11 @@ import kotlin.math.min
 
 data class Point3D(val x: Long, val y: Long, val z: Long) {
     constructor(x: Int, y: Int, z: Int) : this(x.toLong(), y.toLong(), z.toLong())
+
+    operator fun minus(other: Point3D) = Point3D(x - other.x, y - other.y, z - other.z)
+    operator fun div(other: Point3D) = Point3D(x / other.x, y / other.y, z / other.z)
+    operator fun div(d: Long) = Point3D(x / d, y / d, z / d)
+    operator fun times(d: Long) = Point3D(x * d, y * d, z * d)
 }
 
 class Generic3dGrid<Item : GenericGrid.GenericGridItem>(val defaultItem: Item) {
