@@ -6,26 +6,35 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 object Parser {
-    fun parse(data: List<String>): Pair<List<String>, Array<Array<Int>>> {
-        val nodes = data.map { row -> row.split(":").map {
-            it.split(" ")
-        }.flatten() }.flatten().filter { it.isNotBlank() }.map { it.trim() }.toSet().toList()
+    data class Info(val nodes: Map<String, MutableSet<String>>)
+
+    fun parse(data: List<String>): Info {
+        val nodes = data.map { row ->
+            row.split(":").map {
+                it.split(" ")
+            }.flatten()
+        }.flatten().filter { it.isNotBlank() }.map { it.trim() }.toSet().toList()
 
         val adjacencyMatrix = Array(nodes.size) { Array(nodes.size) { 0 } }
-
         data.forEach { row ->
-            val node1 = row.split(":").first().let { nodes.indexOf(it) }
-            val otherNodes = row.split(":").last().trim().split(" ").map {
-                nodes.indexOf(it)
-            }
+            val node1 = row.split(":").first()
+            val node1Index = node1.let { nodes.indexOf(it) }
+            val otherNodes = row.split(":").last().trim().split(" ")
 
-            otherNodes.forEach { node2 ->
-                adjacencyMatrix[node1][node2] =  1
-                adjacencyMatrix[node2][node1] =  1
-            }
+            otherNodes
+                .map { nodes.indexOf(it) }
+                .forEach { node2 ->
+                    adjacencyMatrix[node1Index][node2] = 1
+                    adjacencyMatrix[node2][node1Index] = 1
+                }
         }
 
-        return Pair(nodes, adjacencyMatrix)
+        val nodeMap = nodes.associateWith {  thisNode ->
+            val indexThis = nodes.indexOf(thisNode)
+            nodes.filter { otherNode -> adjacencyMatrix[indexThis][nodes.indexOf(otherNode)] == 1 }.toMutableSet()
+        }
+
+        return Info(nodeMap)
     }
 
     private fun Array<Array<Int>>.matrixString() = buildString {
