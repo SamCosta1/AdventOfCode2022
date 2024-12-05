@@ -11,7 +11,8 @@ import kotlin.system.measureTimeMillis
 
 fun main() {
 //    println(AsciiTableGenerator.formatInProgress(yearResults))
-//    println(AsciiGraphGenerator.formatGraph(yearResults))
+//    println(AsciiTableGenerator.formatInProgress(Main2024.runAll()))
+//    println(AsciiGraphGenerator.formatGraph(Main2024.runAll()))
 
 //    println(AsciiTableGenerator.formatInProgress(Main2023.run(25)))
 //    println(AsciiTableGenerator.formatInProgress(Main2023.runLatest()))

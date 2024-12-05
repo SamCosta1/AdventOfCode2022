@@ -14,10 +14,7 @@ interface YearOfPuzzles {
 
     fun runAll() = runTimedNew {
         puzzles.mapIndexed { index, puzzle ->
-            puzzle.run(index + 1, year).also {
-
-            println("Finished ${index + 1}")
-            }
+            puzzle.run(index + 1, year)
         }
     }.let {
         YearResults(it.solution ?: emptyList(), it.runtime, year)
