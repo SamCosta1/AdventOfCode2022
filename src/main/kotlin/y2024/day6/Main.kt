@@ -32,77 +32,61 @@ class Main(
     }
 
     // 1988 1998 is too high
-    fun GenericGrid<Parser.Item>.causesLoop(
-        startPos: Point,
-        startDirection: MovementDirection
-    ): Boolean {
-        var thisPos = startPos
-        var direction = startDirection
-        val newPointsAndDirections = mutableMapOf<Point, MutableSet<MovementDirection>>()
-        while (this[thisPos] != Parser.Item.Outside) {
-            if (this[thisPos(direction)] == Parser.Item.Obstacle) {
-                direction = direction.turnRight90Degrees
+    // wrong 1838
+
+    override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { (startPos, grid) ->
+        var currentPos = startPos(MovementDirection.North)
+        var currentDirection = MovementDirection.North
+
+        val sols = mutableSetOf<Point>()
+        while (grid[currentPos] != Parser.Item.Outside) {
+            val forwardOne = currentPos(currentDirection)
+            if (grid[forwardOne] == Parser.Item.Obstacle) {
+                currentDirection = currentDirection.turnRight90Degrees
                 continue
             }
 
-            if (this[thisPos] == Parser.Item.Outside) {
-                return false
-            } else if (
-                    newPointsAndDirections[thisPos]?.contains(direction) == true
-            ) {
-                return true
-            } else {
-                newPointsAndDirections.getOrPut(thisPos) { mutableSetOf() }.add(direction)
-                thisPos = thisPos(direction)
+            if (grid[forwardOne] == Parser.Item.Outside) {
+                println("MAIN: we're done $forwardOne")
+                break
             }
+
+            grid[forwardOne] = Parser.Item.Obstacle
+
+            val visited = mutableMapOf<Point, MutableSet<MovementDirection>>()
+            var currentLoopPos = startPos
+            var currentLoopDirection = MovementDirection.North
+            while (grid[currentLoopPos] != Parser.Item.Outside) {
+                val forwardOneLoop = currentLoopPos(currentLoopDirection)
+                if (grid[forwardOneLoop] == Parser.Item.Obstacle) {
+                    currentLoopDirection = currentLoopDirection.turnRight90Degrees
+                    continue
+                }
+
+                if (grid[forwardOneLoop] == Parser.Item.Outside) {
+                    break
+                }
+
+                if (grid[forwardOneLoop] == Parser.Item.Free) {
+                    if (visited[currentLoopPos]?.contains(currentLoopDirection) == true) {
+                        sols.add(forwardOne)
+                        break
+                    } else {
+                        visited.getOrPut(currentLoopPos) { mutableSetOf<MovementDirection>() }.add(currentLoopDirection)
+                    }
+                }
+                currentLoopPos = forwardOneLoop
+            }
+
+            grid[forwardOne] = Parser.Item.Free
+            currentPos = forwardOne
         }
 
-        return false
-    }
-
-    override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { (startPos, grid) ->
-        var thisPos = startPos
-        var direction = MovementDirection.North
-
-        val solutions = mutableListOf<Pair<Point, MovementDirection>>()
-        var iterations = 0
-        while (grid[thisPos] != Parser.Item.Outside) {
-            if (grid[thisPos(direction)] == Parser.Item.Obstacle) {
-                direction = direction.turnRight90Degrees
-                continue;
-            }
-
-            val nextPos = thisPos(direction)
-            if (grid[nextPos] == Parser.Item.Outside) {
-                break;
-            }
-            grid[nextPos] = Parser.Item.Obstacle
-
-            if (
-                grid.causesLoop(
-                    thisPos,
-                    direction.turnRight90Degrees,
-                )
-            ) {
-                solutions.add(nextPos to direction.turnRight90Degrees)
-            }
-            grid[nextPos] = Parser.Item.Free
-
-            thisPos = nextPos
-
-            iterations++
-//            if (iterations % 10 == 0) {
-//            println("Iterated $iterations / 5705")
-//            }
+        sols.forEach {
+            grid[it] = Parser.Item.Outside
         }
-
-        solutions.removeIf { it.first == startPos }
-        solutions.forEach {
-            grid[it.first] = Parser.Item.Outside
-        }
-//        println("solutions $solutions")
         println(grid)
-        return@let solutions.map { it.first }.toSet().size
+        sols.size
     }
 
 }
