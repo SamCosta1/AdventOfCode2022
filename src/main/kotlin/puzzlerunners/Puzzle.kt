@@ -8,6 +8,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.text.DecimalFormat
 import java.util.logging.Logger
+import kotlin.math.round
 
 object NotStarted
 
@@ -41,7 +42,7 @@ data class DayResults(
 }
 data class ExecutionResult<T>(val solution: T?, val runtime: Long) {
     fun formatRuntime(): String = (decimalFormatter.format(runtime / 1000_000.0) + "ms ${
-        if (runtime > 1000) "(" + decimalFormatter.format(runtime / 1000_000_000) + "s)" else ""
+        if (runtime > 1000) "(" + decimalFormatter.format(round(runtime / 1000_000_000.0)) + "s)" else ""
     }").takeUnless { solution == Unit } ?: "DNF"
     companion object {
         val decimalFormatter = DecimalFormat("#.###");

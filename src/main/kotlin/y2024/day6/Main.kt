@@ -1,5 +1,6 @@
 package y2024.day6
 
+import kotlinx.coroutines.*
 import puzzlerunners.Puzzle
 import utils.GenericGrid
 import utils.MovementDirection
@@ -26,19 +27,15 @@ class Main(
             iterations++
         }
 
-        println("Iterations $iterations")
         points.forEach { grid[it] = Parser.Item.Outside }
         return@let points.size - 1
     }
-
-    // 1988 1998 is too high
-    // wrong 1838
 
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { (startPos, grid) ->
         var currentPos = startPos(MovementDirection.North)
         var currentDirection = MovementDirection.North
 
-        val sols = mutableSetOf<Point>()
+        val path = mutableListOf<Point>()
         while (grid[currentPos] != Parser.Item.Outside) {
             val forwardOne = currentPos(currentDirection)
             if (grid[forwardOne] == Parser.Item.Obstacle) {
@@ -47,46 +44,56 @@ class Main(
             }
 
             if (grid[forwardOne] == Parser.Item.Outside) {
-                println("MAIN: we're done $forwardOne")
                 break
             }
 
-            grid[forwardOne] = Parser.Item.Obstacle
-
-            val visited = mutableMapOf<Point, MutableSet<MovementDirection>>()
-            var currentLoopPos = startPos
-            var currentLoopDirection = MovementDirection.North
-            while (grid[currentLoopPos] != Parser.Item.Outside) {
-                val forwardOneLoop = currentLoopPos(currentLoopDirection)
-                if (grid[forwardOneLoop] == Parser.Item.Obstacle) {
-                    currentLoopDirection = currentLoopDirection.turnRight90Degrees
-                    continue
-                }
-
-                if (grid[forwardOneLoop] == Parser.Item.Outside) {
-                    break
-                }
-
-                if (grid[forwardOneLoop] == Parser.Item.Free) {
-                    if (visited[currentLoopPos]?.contains(currentLoopDirection) == true) {
-                        sols.add(forwardOne)
-                        break
-                    } else {
-                        visited.getOrPut(currentLoopPos) { mutableSetOf<MovementDirection>() }.add(currentLoopDirection)
-                    }
-                }
-                currentLoopPos = forwardOneLoop
-            }
-
-            grid[forwardOne] = Parser.Item.Free
+            path.add(forwardOne)
             currentPos = forwardOne
         }
 
-        sols.forEach {
-            grid[it] = Parser.Item.Outside
+        val sols = mutableSetOf<Point>()
+        val scope = CoroutineScope(Dispatchers.IO)
+        runBlocking {
+            path.map { pathStep ->
+                scope.async {
+                    if (checkForLooping(startPos, grid, pathStep)) {
+                        sols.add(pathStep)
+                    }
+                }
+            }.awaitAll()
+            sols.size
         }
-        println(grid)
-        sols.size
+    }
+
+    private inline fun checkForLooping(
+        startPos: Point,
+        grid: GenericGrid<Parser.Item>,
+        extraObstacle: Point
+    ) : Boolean {
+        val visited = mutableSetOf<Pair<Point, MovementDirection>>()
+        var currentLoopPos = startPos
+        var currentLoopDirection = MovementDirection.North
+        while (grid[currentLoopPos] != Parser.Item.Outside) {
+            val forwardOneLoop = currentLoopPos(currentLoopDirection)
+            if (grid[forwardOneLoop] == Parser.Item.Obstacle || forwardOneLoop == extraObstacle) {
+                currentLoopDirection = currentLoopDirection.turnRight90Degrees
+                continue
+            }
+
+            if (grid[forwardOneLoop] == Parser.Item.Outside) {
+                break
+            }
+
+            if (grid[forwardOneLoop] == Parser.Item.Free) {
+                if (visited.contains(currentLoopPos to currentLoopDirection)) {
+                    return true
+                } else {
+                    visited.add(currentLoopPos to currentLoopDirection)
+                }
+            }
+            currentLoopPos = forwardOneLoop
+        }
+        return false
     }
 
 }
