@@ -38,4 +38,7 @@ data class Point(val x: Long, val y: Long) {
         Point(x, y + 1),
         Point(x, y - 1)
     )
+
+    operator fun minus(other: Point) = Point(x - other.x, y - other.y)
+    operator fun plus(other: Point) = Point(x + other.x, y + other.y)
 }
