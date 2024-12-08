@@ -42,21 +42,9 @@ class Main(
         return sequenceOf(p1 + diff, p2 - diff).filter { grid[it] != Parser.Item.Outside }
     }
 
-    private fun computeAntiNodesPart2(p1: Point, p2: Point, grid: GenericGrid<Parser.Item>): Sequence<Point> {
-        val diff = p1 - p2
-        return sequence {
-            var current = p2 + diff
-            while (grid[current] != Parser.Item.Outside) {
-                yield(current)
-                current += diff
-            }
-
-            current = p2 - diff
-            while (grid[current] != Parser.Item.Outside) {
-                yield(current)
-                current -= diff
-            }
-        }
+    private fun computeAntiNodesPart2(p1: Point, p2: Point, grid: GenericGrid<Parser.Item>): Sequence<Point> = (p1 - p2).let { diff ->
+        generateSequence(p2) { acc -> (acc + diff).takeUnless { grid[it] == Parser.Item.Outside } } +
+                generateSequence(p2) { acc -> (acc - diff).takeUnless { grid[it] == Parser.Item.Outside } }
     }
 }
 
