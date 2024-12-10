@@ -1,11 +1,14 @@
 package y2024.day6
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import puzzlerunners.Puzzle
 import utils.GenericGrid
 import utils.MovementDirection
 import utils.Point
 import utils.RunMode
+import java.util.*
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 41,
@@ -51,21 +54,22 @@ class Main(
             currentPos = forwardOne
         }
 
-        val sols = mutableSetOf<Point>()
-//        val scope = CoroutineScope(Dispatchers.IO)
-//        runBlocking {
+        val sols = Collections.synchronizedCollection(mutableSetOf<Point>())
+        val scope = CoroutineScope(Dispatchers.IO)
+
+        runBlocking {
             path.map { pathStep ->
-//                scope.async {
+                scope.async {
                     if (checkForLooping(startPos, grid, pathStep)) {
                         sols.add(pathStep)
                     }
                 }
-//            }.awaitAll()
+            }.awaitAll()
             sols.size
-
+        }
     }
 
-    private inline fun checkForLooping(
+    fun checkForLooping(
         startPos: Point,
         grid: GenericGrid<Parser.Item>,
         extraObstacle: Point
