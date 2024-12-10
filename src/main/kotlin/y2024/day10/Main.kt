@@ -1,7 +1,6 @@
 package y2024.day10
 
 import puzzlerunners.Puzzle
-import puzzlerunners.NotStarted
 import utils.Point
 import utils.RunMode
 
@@ -9,7 +8,7 @@ class Main(
     override val part1ExpectedAnswerForSample: Any = 36,
     override val part2ExpectedAnswerForSample: Any = 81,
     override val isComplete: Boolean = true
-): Puzzle {
+) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).let { grid ->
         val zeros = grid.points.filter { it.value.value == 0 }.keys
 
@@ -43,7 +42,30 @@ class Main(
 
         result
     }
+
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { grid ->
-        val zeros = grid.points.filter { it.value.value == 0 }.keys
+        val zeros = grid.points.filter { it.value.value == 0 }
+
+        var total = 0
+        fun follow(node: Point) {
+            if (grid[node].value == 9) {
+                total++
+                return
+            }
+            var nextSteps = node.adjacentNoDiagonal().filter {
+                grid[it].value == grid[node].value + 1
+            }
+
+            while (nextSteps.size == 1 && grid[nextSteps[0]].value != 9) {
+                nextSteps = nextSteps[0].adjacentNoDiagonal().filter {
+                    grid[it].value == grid[nextSteps[0]].value + 1
+                }
+            }
+
+            nextSteps.forEach { point -> follow(point) }
+        }
+
+        zeros.forEach { follow(it.key) }
+        total
     }
 }
