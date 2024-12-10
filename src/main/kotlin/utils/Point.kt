@@ -39,6 +39,8 @@ data class Point(val x: Long, val y: Long) {
         Point(x, y - 1)
     )
 
+    fun adjacentNoDiagonal() = listOf(top, left, right, bottom)
+
     operator fun minus(other: Point) = Point(x - other.x, y - other.y)
     operator fun plus(other: Point) = Point(x + other.x, y + other.y)
 }

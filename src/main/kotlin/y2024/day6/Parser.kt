@@ -23,7 +23,11 @@ object Parser {
                     guardPos = Point(x, y)
                     grid[guardPos!!] = Item.Free
                 } else {
+                    try {
                     grid[Point(x, y)] = Item.entries.first { it.char == c.toString() }
+                    } catch (e: Exception) {
+                        throw Exception(c.toString(), e)
+                    }
                 }
             }
         }

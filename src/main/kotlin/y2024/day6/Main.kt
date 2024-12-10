@@ -52,17 +52,17 @@ class Main(
         }
 
         val sols = mutableSetOf<Point>()
-        val scope = CoroutineScope(Dispatchers.IO)
-        runBlocking {
+//        val scope = CoroutineScope(Dispatchers.IO)
+//        runBlocking {
             path.map { pathStep ->
-                scope.async {
+//                scope.async {
                     if (checkForLooping(startPos, grid, pathStep)) {
                         sols.add(pathStep)
                     }
                 }
-            }.awaitAll()
+//            }.awaitAll()
             sols.size
-        }
+
     }
 
     private inline fun checkForLooping(
