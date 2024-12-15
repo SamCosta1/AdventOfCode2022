@@ -2,10 +2,7 @@ package puzzlerunners.output
 
 import com.jakewharton.picnic.TextAlignment
 import com.jakewharton.picnic.table
-import puzzlerunners.DayResults
-import puzzlerunners.ExecutionResult
-import puzzlerunners.NotStarted
-import puzzlerunners.YearResults
+import puzzlerunners.*
 
 object AsciiTableGenerator {
     fun formatInProgress(yearResults: YearResults) = table {
@@ -108,10 +105,10 @@ object AsciiTableGenerator {
                     "Sample",
                     dayResult.part2Sample?.solution,
                     dayResult.part2Sample?.formatRuntime(),
-                    if (dayResult.part2Sample?.solution == dayResult.puzzle.part2ExpectedAnswerForSample) {
-                        "✅"
-                    } else {
-                        "❌ [Expected Result = ${dayResult.puzzle.part2ExpectedAnswerForSample}]"
+                    when {
+                        dayResult.puzzle.part2ExpectedAnswerForSample == NoSampleAnswer -> "❓"
+                        dayResult.part2Sample?.solution == dayResult.puzzle.part2ExpectedAnswerForSample -> "✅"
+                        else -> "❌ [Expected Result = ${dayResult.puzzle.part2ExpectedAnswerForSample}]"
                     }
                 )
             }

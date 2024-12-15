@@ -11,6 +11,7 @@ import java.util.logging.Logger
 import kotlin.math.round
 
 object NotStarted
+object NoSampleAnswer
 
 interface Puzzle {
     val part1ExpectedAnswerForSample: Any
@@ -60,13 +61,13 @@ fun Puzzle.run(day: Int, year: Int): DayResults {
     } else {
         null
     }
-    val part2Sample = if (part2ExpectedAnswerForSample != NotStarted) runTimedNew {
+    val part2Sample = if (part2ExpectedAnswerForSample != NotStarted || part2ExpectedAnswerForSample == NoSampleAnswer) runTimedNew {
         runCatchingAndLog { runPart2(sample2, runMode = RunMode.Sample) }
     } else {
         null
     }
 
-    val part2Real = if (part2Sample?.solution == part2ExpectedAnswerForSample) runTimedNew {
+    val part2Real = if (part2Sample?.solution == part2ExpectedAnswerForSample || part2ExpectedAnswerForSample == NoSampleAnswer) runTimedNew {
         runCatchingAndLog { runPart2(real, runMode = RunMode.Real) }
     } else {
         null
