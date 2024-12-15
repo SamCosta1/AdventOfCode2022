@@ -16,7 +16,7 @@ class Main(
     val bCost = 1
     override fun runPart1(data: List<String>, runMode: RunMode) = Parser.parse(data).asSequence().doTheThing()
 
-    fun Sequence<Parser.Machine>.doTheThing() = map {
+    private fun Sequence<Parser.Machine>.doTheThing() = map {
         val matrix = it.matrix()
         it to gaussianElimination(matrix)
     }.map { (machine, doubles) ->

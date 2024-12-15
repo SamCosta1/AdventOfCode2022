@@ -42,4 +42,7 @@ data class PointInt(val x: Int, val y: Int) {
 
     operator fun minus(other: PointInt) = PointInt(x - other.x, y - other.y)
     operator fun plus(other: PointInt) = PointInt(x + other.x, y + other.y)
+    operator fun times(other: PointInt) = PointInt(x * other.x, y * other.y)
+    operator fun times(scalar: Int) = PointInt(x * scalar, y * scalar)
+    fun floorMod(other: PointInt) = PointInt(Math.floorMod(x, other.x), Math.floorMod(y, other.y))
 }
