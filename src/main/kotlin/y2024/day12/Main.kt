@@ -5,15 +5,15 @@ import puzzlerunners.Puzzle
 import utils.RunMode
 
 class Main(
-    override val part1ExpectedAnswerForSample: Any = 1930L,
-    override val part2ExpectedAnswerForSample: Any = 1206L,
+    override val part1ExpectedAnswerForSample: Any = 1930,
+    override val part2ExpectedAnswerForSample: Any = 1206,
     override val isComplete: Boolean = true
 ) : Puzzle {
     override fun runPart1(data: List<String>, runMode: RunMode) = calculatePriceForRegions(Parser.parse(data), 1)
 
-    private fun calculatePriceForRegions(map: Array<CharArray>, part: Int): Long {
+    private fun calculatePriceForRegions(map: Array<CharArray>, part: Int): Int {
         var currentRoot: PointInt? = PointInt(1, 1)
-        var total = 0L
+        var total = 0
         while (currentRoot != null) {
             total += calculatePriceForRegion(currentRoot, map, part)
             currentRoot = findNextRoot(map)
@@ -23,11 +23,11 @@ class Main(
 
     operator fun Array<CharArray>.get(point: PointInt) = this[point.y][point.x]
 
-    private fun calculatePriceForRegion(currentRoot: PointInt, map: Array<CharArray>, part: Int): Long {
+    private fun calculatePriceForRegion(currentRoot: PointInt, map: Array<CharArray>, part: Int): Int {
         val currentRegion = mutableSetOf(currentRoot)
         val regionSymbol = map[currentRoot.y][currentRoot.x]
         val perimeterNodes = mutableSetOf(currentRoot)
-        var perimeterLength = 0L
+        var perimeterLength = 0
 
         fun regionSearch(pos: PointInt) {
             val neighbours = pos.adjacentNoDiagonal().filter { !currentRegion.contains(it) }
@@ -51,16 +51,15 @@ class Main(
         return perimeterOrSides * currentRegion.size
     }
 
-    private fun countSides(thisSymbol: Char, perimeterNodes: MutableSet<PointInt>, map: Array<CharArray>): Long {
+    private fun countSides(thisSymbol: Char, perimeterNodes: MutableSet<PointInt>, map: Array<CharArray>): Int {
 
+        val minY = perimeterNodes.minOf { it.y } - 1
+        val maxY = perimeterNodes.maxOf { it.y } + 1
+        val minX = perimeterNodes.minOf { it.x } - 1
+        val maxX = perimeterNodes.maxOf { it.x } + 1
 
-        val minY = perimeterNodes.minOf { it.y } - 2
-        val maxY = perimeterNodes.maxOf { it.y } + 2
-        val minX = perimeterNodes.minOf { it.x } - 2
-        val maxX = perimeterNodes.maxOf { it.x } + 2
-
-        var horizontal = 0L
-        var vertical = 0L
+        var horizontal = 0
+        var vertical = 0
         (minY..maxY).forEach { y ->
             val topEdges = mutableListOf<Int>()
             val bottomEdges = mutableListOf<Int>()
@@ -96,13 +95,13 @@ class Main(
         return horizontal + vertical
     }
 
-    private fun countRanges(edgePoints: MutableList<Int>): Long {
+    private fun countRanges(edgePoints: MutableList<Int>): Int {
         if (edgePoints.size == 0) {
             return 0
         }
 
         edgePoints.sort()
-        var count = 1L
+        var count = 1
         for (i in 0..<edgePoints.lastIndex) {
             if (edgePoints[i] + 1 != edgePoints[i + 1]) {
                 count++
