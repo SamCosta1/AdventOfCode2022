@@ -2,8 +2,11 @@ package utils
 
 import puzzlerunners.DayResults
 import puzzlerunners.ExecutionResult
+import java.math.BigDecimal
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
@@ -65,3 +68,4 @@ fun getAlphabetLetter(index: Int) = buildString {
  fun IntRange.coerceAtLeast(value: Int) = (kotlin.math.max(first, value)..last)
  fun LongRange.coerceAtMost(value: Long) = (first..kotlin.math.min(last, value))
  fun LongRange.coerceAtLeast(value: Long) = (java.lang.Long.max(first, value)..last)
+
