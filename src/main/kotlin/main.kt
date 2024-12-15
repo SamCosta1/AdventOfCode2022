@@ -1,4 +1,3 @@
-
 import puzzlerunners.NewYearCreator
 import puzzlerunners.NotStarted
 import puzzlerunners.output.AsciiGraphGenerator
