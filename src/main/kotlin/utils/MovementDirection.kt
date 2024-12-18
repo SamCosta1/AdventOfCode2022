@@ -26,4 +26,11 @@ enum class MovementDirection {
         West -> North
         East -> South
     }
+
+    val turnLeft90Degrees get() = when(this) {
+        North -> West
+        South -> East
+        West -> South
+        East -> North
+    }
 }
