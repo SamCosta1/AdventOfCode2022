@@ -7,6 +7,8 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
@@ -63,6 +65,9 @@ fun getAlphabetLetter(index: Int) = buildString {
         remainingIndex /= 26
     }
 }
+
+fun rangeBetween(a: Int, b: Int) = min(a, b) .. max(a, b)
+fun rangeBetween(a: Long, b: Long) = min(a, b) .. max(a, b)
 
  fun IntRange.coerceAtMost(value: Int) = (first..kotlin.math.min(last, value))
  fun IntRange.coerceAtLeast(value: Int) = (kotlin.math.max(first, value)..last)
