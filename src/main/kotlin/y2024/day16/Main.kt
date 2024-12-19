@@ -69,23 +69,21 @@ class Main(
         // This answer is one higher than the real input, I have no idea why
         val answerIsh = dist.filter { it.key.first == end }.minOf { it.value }
 
-        val allInPaths = mutableSetOf<Pair<Point, MovementDirection>>()
         val minPathEnds = dist.filter { it.key.first == end && it.value == answerIsh }
+
+        val allInPaths = minPathEnds.keys.toMutableSet()
         var lastPoints = prev.filter { minPathEnds.contains(it.key)  }.values.flatten()
 
-        println(lastPoints)
         while (lastPoints.isNotEmpty()) {
             val newLast = prev.filter { lastPoints.contains(it.key) }.values.flatten()
             allInPaths.addAll(lastPoints.map { it })
             lastPoints = newLast
         }
-        println(allInPaths.map { it.first }.toSet().size)
         allInPaths.map { it.first }.forEach {
             grid[it] = Parser.Item.Start
         }
-        println(grid)
 
-        return answerIsh - if (runMode == RunMode.Sample) 0 else 1
+        return answerIsh
     }
 
     override fun runPart2(data: List<String>, runMode: RunMode): Any = Parser.parse(data).let { grid ->
