@@ -1,29 +1,26 @@
 package y2024.day16
 
-import org.nd4j.linalg.indexing.conditions.Not
 import puzzlerunners.Puzzle
-import puzzlerunners.NotStarted
 import utils.GenericGrid
 import utils.MovementDirection
 import utils.Point
 import utils.RunMode
-import kotlin.math.max
-import kotlin.math.min
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = 11048,
-    override val part2ExpectedAnswerForSample: Any = NotStarted,
+    override val part2ExpectedAnswerForSample: Any = 64,
     override val isComplete: Boolean = true
 ) : Puzzle {
 
     // 123541 to high
     override fun runPart1(data: List<String>, runMode: RunMode): Any = Parser.parse(data).let { grid ->
+        findShortestPathDistance(grid).shortestPath
+    }
+
+    data class Answer(val shortestPath: Int, val numOnShortestPath: Int)
+    private fun findShortestPathDistance(grid: GenericGrid<Parser.Item>): Answer  {
         val start = grid.points.filter { it.value == Parser.Item.Start }.keys.first()
         val end = grid.points.filter { it.value == Parser.Item.End }.keys.first()
-        findShortestPathDistance(start, end, grid, runMode)
-    }
-// 670 too high
-    private fun findShortestPathDistance(start: Point, end: Point, grid: GenericGrid<Parser.Item>, runMode: RunMode): Int {
         grid[start] = Parser.Item.Free
         grid[end] = Parser.Item.Free
 
@@ -66,10 +63,8 @@ class Main(
             }
         }
 
-        // This answer is one higher than the real input, I have no idea why
-        val answerIsh = dist.filter { it.key.first == end }.minOf { it.value }
-
-        val minPathEnds = dist.filter { it.key.first == end && it.value == answerIsh }
+        val shortestDistance = dist.filter { it.key.first == end }.minOf { it.value }
+        val minPathEnds = dist.filter { it.key.first == end && it.value == shortestDistance }
 
         val allInPaths = minPathEnds.keys.toMutableSet()
         var lastPoints = prev.filter { minPathEnds.contains(it.key)  }.values.flatten()
@@ -83,49 +78,10 @@ class Main(
             grid[it] = Parser.Item.Start
         }
 
-        return answerIsh
+        return Answer(shortestDistance, allInPaths.map { it.first }.toSet().size)
     }
 
     override fun runPart2(data: List<String>, runMode: RunMode): Any = Parser.parse(data).let { grid ->
-        val start = grid.points.filter { it.value == Parser.Item.Start }.keys.first()
-        val end = grid.points.filter { it.value == Parser.Item.End }.keys.first()
-        val shortestPath = findShortestPathDistance(start, end, grid, runMode)
-
-        val allTiles = mutableSetOf<Point>()
-        fun go(current: Point, direction: MovementDirection, scoreSoFar: Int, soFar: Set<Pair<Point, MovementDirection>>) {
-            if (scoreSoFar > shortestPath) {
-                return
-            }
-
-            val shortestLeft = (end - current).let { min(it.x, -it.y) }
-            val stepsRemaining = shortestPath - scoreSoFar
-            if (stepsRemaining < shortestLeft) {
-                return
-            }
-
-            if (current == end) {
-                allTiles.addAll(soFar.map { it.first })
-                return
-            }
-            sequenceOf(
-                direction,
-                direction.turnRight90Degrees,
-                direction.turnLeft90Degrees
-            ).filter { grid[current(it)] == Parser.Item.Free}.forEach { newDir ->
-                val nextPoint = current(newDir)
-                if (!soFar.contains(nextPoint to newDir)) {
-                    go(
-                        nextPoint,
-                        newDir,
-                        scoreSoFar + if (newDir == direction) 1 else 1001,
-                        soFar + (nextPoint to newDir)
-                    )
-                }
-            }
-        }
-
-//        go(current = start, MovementDirection.East, 0, setOf(start to MovementDirection.East))
-        println(allTiles.size)
-        allTiles.size
+        findShortestPathDistance(grid).numOnShortestPath
     }
 }
