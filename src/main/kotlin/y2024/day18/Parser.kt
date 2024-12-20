@@ -17,25 +17,31 @@ object Parser {
             }
     }
 
-    fun parse(data: List<String>, runMode: RunMode) = GenericGrid<Item>(Item.Corrupted).apply {
-        val gridSize = when(runMode) {
-            RunMode.Sample -> 6
-            RunMode.Real -> 70
-        }
-
-        (0..gridSize).forEach {  x->
-            (0..gridSize).forEach { y ->
-                this[x, y] = Item.Free
-            }
-        }
-        data.take(
+    fun parsePart1(data: List<String>, runMode: RunMode) = parse(data, runMode).let { (bytes, grid) ->
+        bytes.take(
             when (runMode) {
                 RunMode.Sample -> 12
                 RunMode.Real -> 1024
             }
-        ).map { row ->
+        ).forEach { grid[it] = Item.Corrupted }
+        grid
+    }
+
+    fun parse(data: List<String>, runMode: RunMode) = GenericGrid<Item>(Item.Corrupted).let { grid ->
+        val gridSize = when (runMode) {
+            RunMode.Sample -> 6
+            RunMode.Real -> 70
+        }
+
+        (0..gridSize).forEach { x ->
+            (0..gridSize).forEach { y ->
+                grid[x, y] = Item.Free
+            }
+        }
+        val bytes = data.map { row ->
             val (x, y) = row.split(",").map { it.toLong() }
             Point(x, y)
-        }.forEach { this[it] = Item.Corrupted }
+        }
+        bytes to grid
     }
 }
