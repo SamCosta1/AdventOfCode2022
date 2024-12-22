@@ -38,17 +38,20 @@ class Main(
         }
         println(info)
         var aRegister = 0L
-        table {
-            cellStyle {
-                border = true
-                paddingLeft = 1
-                paddingRight = 1
-            }
-            header {
-                row("Initial A", "InitialA bIN", "A", "B", "C","Out", "", "A", "B", "C","Out")
-            }
+//        table {
+//            cellStyle {
+//                border = true
+//                paddingLeft = 1
+//                paddingRight = 1
+//            }
+//            header {
+//                row("Initial A", "InitialA bIN", "A", "B", "C","Out", "", "A", "B", "C","Out")
+//            }
 
             while (true) {
+                if (aRegister % 1000000 == 0L) {
+                    println( "$aRegister ${(aRegister * 100) / Int.MAX_VALUE}")
+                }
                 val current = Parser.Input(
                     regA = aRegister,
                     regB = info.regB,
@@ -59,38 +62,34 @@ class Main(
                 runProgram(current)
                 if (current.output == current.program) {
                     println("done $aRegister")
-//                    return@let aRegister
+                    return@let aRegister
                 }
 
-                if (aRegister > 200) {
-                    break
-                }
-
-                // 3 7 4 6 3 2 1 0 7 7 7 0 3 3 1 0 3 7 6 2 3 3 1 0 7 7 1 4 2 01 0 3 7 0 6 2 0 1
-                row {
-                    cells(
-                        aRegister,
-                        Integer.toBinaryString(aRegister.toInt()),
-                        Integer.toBinaryString(current.regA.toInt()),
-                        Integer.toBinaryString(current.regB.toInt()),
-                        Integer.toBinaryString(current.regC.toInt()),
-                        current.output.map { Integer.toBinaryString(it.toInt()) }.joinToString(","),
-                        "",
-                        current.regA,
-                        current.regB,
-                        current.regC,
-                        current.output.joinToString(","),
-                        current.output.map { Integer.toBinaryString(it.toInt()) }.joinToString("").let { Integer.valueOf(it, 2) }
-                    ) {
-                        this.alignment = TextAlignment.MiddleRight
-                    }
-                }
+//                // 3 7 4 6 3 2 1 0 7 7 7 0 3 3 1 0 3 7 6 2 3 3 1 0 7 7 1 4 2 01 0 3 7 0 6 2 0 1
+//                row {
+//                    cells(
+//                        aRegister,
+//                        Integer.toBinaryString(aRegister.toInt()),
+//                        Integer.toBinaryString(current.regA.toInt()),
+//                        Integer.toBinaryString(current.regB.toInt()),
+//                        Integer.toBinaryString(current.regC.toInt()),
+//                        current.output.map { Integer.toBinaryString(it.toInt()) }.joinToString(","),
+//                        "",
+//                        current.regA,
+//                        current.regB,
+//                        current.regC,
+//                        current.output.joinToString(","),
+//                        current.output.map { Integer.toBinaryString(it.toInt()) }.joinToString("").let { Integer.valueOf(it, 2) }
+//                    ) {
+//                        this.alignment = TextAlignment.MiddleRight
+//                    }
+//                }
 
                 aRegister++
             }
-        }.also {
-            println(it)
-        }
+//        }.also {
+//            println(it)
+//        }
 
         aRegister
 //        throw Exception("huh")
@@ -113,8 +112,7 @@ class Main(
 
     fun Parser.Input.division(operand: Long): Long {
         val numerator = regA
-        val denominator = 2.0.pow(combo(operand).toDouble())
-        return (numerator / denominator).toLong()
+        return numerator.shr(combo(operand).toInt())
     }
     fun Parser.Input.adv(operand: Long) {
         regA = division(operand)
