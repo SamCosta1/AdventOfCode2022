@@ -1,8 +1,6 @@
 package y2024.day20
 
-import org.apache.commons.lang3.math.NumberUtils.min
 import puzzlerunners.Puzzle
-import puzzlerunners.NotStarted
 import utils.GenericGrid
 import utils.Point
 import utils.RunMode
@@ -16,32 +14,16 @@ class Main(
         data: List<String>,
         runMode: RunMode
     ) = Parser.parse(data, runMode).let { (grid, start, end) ->
-        val baseSpeed = runShortestPath(start, end, grid)
+        val cheatsBudget = 2
 
         val minSpeedIncrease = when (runMode) {
             RunMode.Sample -> 2
             RunMode.Real -> 100
         }
-        var count = 0
-
-        val corrupted = grid.points.filter { gridPoint ->
-            gridPoint.value == Parser.Item.Corrupted
-                    && !gridPoint.key.adjacentNoDiagonal().all { grid[it] == Parser.Item.Corrupted }
-        }
-//        corrupted.forEach { (point, _) ->
-//            grid[point] = Parser.Item.Free
-//            val speed = runShortestPath(start, end, grid)
-//            if (baseSpeed - speed >= minSpeedIncrease) {
-//                count++
-//            }
-//            grid[point] = Parser.Item.Corrupted
-//        }
-
-
-        count
-        part1ExpectedAnswerForSample
+        calculateNumberOfCheats(cheatsBudget, start, end, grid, minSpeedIncrease)
     }
 
+    // this does not need djikstra but it was an easy copy and paste
     private fun runShortestPath(
         start: Point,
         end: Point,
@@ -71,69 +53,50 @@ class Main(
         return dist to path.reversed()
     }
 
-    data class StatefulNode(
-        val point: Point,
-        val cheatsRemaining: Int
-    )//, val cheatStart: Point?)//, val cheatEnd: Point?)
-
     override fun runPart2(
         data: List<String>, runMode: RunMode
     ) = Parser.parse(data, runMode).let { (grid, start, end) ->
-        val baseSpeeds = runShortestPath(start, end, grid)
-        val totalSpeed = baseSpeeds.first[end]!!
-        val order = baseSpeeds.second.associateWith { baseSpeeds.second.indexOf(it) }
-        val endIndex = baseSpeeds.second.lastIndex
         val cheatsBudget = 20
 
         val minSpeedIncrease = when (runMode) {
             RunMode.Sample -> 50
             RunMode.Real -> 100
         }
-        val within20Generic = mutableSetOf<Pair<Point, Int>>()
-        pointsWithinBudget(Point(0, 0), cheatsBudget, 0, within20Generic)
+        calculateNumberOfCheats(cheatsBudget, start, end, grid, minSpeedIncrease)
+    }
 
-        var count = 0
+    private fun calculateNumberOfCheats(
+        cheatsBudget: Int,
+        start: Point,
+        end: Point,
+        grid: GenericGrid<Parser.Item>,
+        minSpeedIncrease: Int
+    ): Int {
+        val baseSpeeds = runShortestPath(start, end, grid)
+        val totalSpeed = baseSpeeds.first[end]!!
+        val order = baseSpeeds.second.associateWith { baseSpeeds.second.indexOf(it) }
+
+        val withinBudgetGeneric = mutableSetOf<Pair<Point, Int>>()
+        pointsWithinBudget(Point(0, 0), cheatsBudget, 0, withinBudgetGeneric)
+
         val set = mutableSetOf<Pair<Point, Point>>()
-        val debug = mutableMapOf<Pair<Point, Point>, Int>()
-        order.forEach() { (cheatStart, index) ->
-            val endPoints = within20Generic
+        order.forEach { (cheatStart, index) ->
+            withinBudgetGeneric
+                .asSequence()
                 .map { (it.first + cheatStart) to it.second }
                 .filter { grid[it.first] == Parser.Item.Free }
                 .map { (cheatEnd, cheatSteps) ->
                     cheatEnd to index + cheatSteps + totalSpeed - order[cheatEnd]!!
+                }.forEach { (cheatEnd, speed) ->
+                    if (speed <= totalSpeed - minSpeedIncrease) {
+                        set.add(cheatStart to cheatEnd)
+                    }
                 }
-
-
-//            There are 32 cheats that save 50 picoseconds.
-//            There are 31 cheats that save 52 picoseconds.
-//            There are 29 cheats that save 54 picoseconds.
-//            There are 39 cheats that save 56 picoseconds.
-//            There are 25 cheats that save 58 picoseconds.
-//            There are 23 cheats that save 60 picoseconds.
-//            There are 20 cheats that save 62 picoseconds.
-//            There are 19 cheats that save 64 picoseconds.
-//            There are 12 cheats that save 66 picoseconds.
-//            There are 14 cheats that save 68 picoseconds.
-//            There are 12 cheats that save 70 picoseconds.
-//            There are 22 cheats that save 72 picoseconds.
-//            There are 4 cheats that save 74 picoseconds.
-//            There are 3 cheats that save 76 picoseconds.
-
-            endPoints.forEach { (cheatEnd, speed) ->
-                if (speed <= totalSpeed - minSpeedIncrease) {
-                    count++
-                    set.add(cheatStart to cheatEnd)
-                    debug[cheatStart to cheatEnd] = min(debug.getOrDefault(cheatStart to cheatEnd, Int.MAX_VALUE), speed)
-                }
-            }
         }
-        println(debug.toList().groupBy { it.second }.map { totalSpeed -it.key to it.value.size })
-        println(grid)
-        println(count)
-        set.size
+        return set.size
     }
 
-    fun pointsWithinBudget(start: Point, totalBudget: Int, budgetUsed: Int, acc: MutableSet<Pair<Point, Int>>) {
+    private fun pointsWithinBudget(start: Point, totalBudget: Int, budgetUsed: Int, acc: MutableSet<Pair<Point, Int>>) {
         if (budgetUsed == totalBudget) {
             return
         }
