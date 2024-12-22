@@ -2,6 +2,7 @@ package y2024.day17
 
 import com.jakewharton.picnic.TextAlignment
 import com.jakewharton.picnic.table
+import com.sun.jna.platform.win32.WinDef.LONG
 import puzzlerunners.Puzzle
 import puzzlerunners.NotStarted
 import puzzlerunners.output.AsciiTableGenerator
@@ -9,20 +10,21 @@ import utils.RunMode
 import kotlin.math.pow
 
 typealias NewInstructionIndex = Long
+
 class Main(
     override val part1ExpectedAnswerForSample: Any = "4,6,3,5,6,3,5,2,1,0",
-    override val part2ExpectedAnswerForSample: Any = 117440,
+    override val part2ExpectedAnswerForSample: Any = 117440L,
     override val isComplete: Boolean = true
 ) : Puzzle {
     override fun runPart1(
         data: List<String>,
         runMode: RunMode
     ) = Parser.parse(data).let { info ->
-        runProgram(info)
+        runProgramP1(info)
         info.output.joinToString(",")
     }
 
-    private fun runProgram(info: Parser.Input) {
+    private fun runProgramP1(info: Parser.Input) {
         var programIndex = 0
         while (programIndex <= info.program.lastIndex) {
             val operation = info.program[programIndex]
@@ -31,11 +33,44 @@ class Main(
         }
     }
 
+    private fun runProgramP2(info: Parser.Input): Boolean {
+        var programIndex = 0
+        var outputIndex = 0
+        while (programIndex <= info.program.lastIndex) {
+            val operation = info.program[programIndex]
+            val operand = info.program[programIndex + 1]
+
+            when (operation) {
+                0L -> info.adv(operand)
+                1L -> info.bxl(operand)
+                2L -> info.bst(operand)
+                3L -> {
+                    info.jnz(operand)?.let {
+                        programIndex = it - 2
+                    }
+                }
+
+                4L -> info.bxc(operand)
+                5L -> {
+                    val out = info.combo(operand) % 8
+                    if (outputIndex > info.program.lastIndex || info.program[outputIndex] != out) {
+                        return false
+                    }
+                    outputIndex++
+                }
+
+                6L -> info.bdv(operand)
+                7L -> info.cdv(operand)
+            }
+
+            programIndex += 2
+        }
+
+        return outputIndex == info.program.size
+    }
+
 
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
-        if (runMode == RunMode.Sample) {
-            return@let part2ExpectedAnswerForSample
-        }
         println(info)
         var aRegister = 0L
 //        table {
@@ -48,22 +83,22 @@ class Main(
 //                row("Initial A", "InitialA bIN", "A", "B", "C","Out", "", "A", "B", "C","Out")
 //            }
 
-            while (true) {
-                if (aRegister % 1000000 == 0L) {
-                    println( "$aRegister ${(aRegister * 100) / Int.MAX_VALUE}")
-                }
-                val current = Parser.Input(
-                    regA = aRegister,
-                    regB = info.regB,
-                    regC = info.regC,
-                    output = mutableListOf(),
-                    program = info.program
-                )
-                runProgram(current)
-                if (current.output == current.program) {
-                    println("done $aRegister")
-                    return@let aRegister
-                }
+        while (true) {
+            if (aRegister % 100000000 == 0L) {
+                println("$aRegister ${(aRegister * 100) / Int.MAX_VALUE}")
+            }
+            val current = Parser.Input(
+                regA = aRegister,
+                regB = info.regB,
+                regC = info.regC,
+                output = mutableListOf(),
+                program = info.program
+            )
+
+            if (runProgramP2(current)) {
+                println("done $aRegister")
+                return@let aRegister
+            }
 
 //                // 3 7 4 6 3 2 1 0 7 7 7 0 3 3 1 0 3 7 6 2 3 3 1 0 7 7 1 4 2 01 0 3 7 0 6 2 0 1
 //                row {
@@ -85,8 +120,8 @@ class Main(
 //                    }
 //                }
 
-                aRegister++
-            }
+            aRegister++
+        }
 //        }.also {
 //            println(it)
 //        }
@@ -114,6 +149,7 @@ class Main(
         val numerator = regA
         return numerator.shr(combo(operand).toInt())
     }
+
     fun Parser.Input.adv(operand: Long) {
         regA = division(operand)
     }
