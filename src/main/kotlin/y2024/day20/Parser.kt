@@ -7,17 +7,21 @@ import utils.RunMode
 object Parser {
 
     enum class Item : GenericGrid.GenericGridItem {
+        OffMap,
         Corrupted,
+        Mark,
         Free;
 
         override val char: String
             get() = when (this) {
+                OffMap -> "@"
                 Corrupted -> "#"
+                Mark -> "0"
                 Free -> "."
             }
     }
 
-    fun parse(data: List<String>, runMode: RunMode) = GenericGrid<Item>(Item.Corrupted).let { grid ->
+    fun parse(data: List<String>, runMode: RunMode) = GenericGrid<Item>(Item.OffMap).let { grid ->
         val gridSize = data.size
         var start: Point? = null
         var end: Point? = null
