@@ -1,11 +1,8 @@
 package y2024.day17
 
-import com.jakewharton.picnic.TextAlignment
-import com.jakewharton.picnic.table
-import com.sun.jna.platform.win32.WinDef.LONG
+import kotlinx.coroutines.*
+import kotlinx.coroutines.selects.select
 import puzzlerunners.Puzzle
-import puzzlerunners.NotStarted
-import puzzlerunners.output.AsciiTableGenerator
 import utils.RunMode
 import kotlin.math.pow
 
@@ -21,7 +18,7 @@ class Main(
         runMode: RunMode
     ) = Parser.parse(data).let { info ->
         runProgramP1(info)
-        info.output.joinToString(",")
+        info.output!!.joinToString(",")
     }
 
     private fun runProgramP1(info: Parser.Input) {
@@ -36,6 +33,8 @@ class Main(
     private fun runProgramP2(info: Parser.Input): Boolean {
         var programIndex = 0
         var outputIndex = 0
+        val aOrig = info.regA
+
         while (programIndex <= info.program.lastIndex) {
             val operation = info.program[programIndex]
             val operand = info.program[programIndex + 1]
@@ -71,63 +70,57 @@ class Main(
 
 
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
-        println(info)
-        var aRegister = 0L
-//        table {
-//            cellStyle {
-//                border = true
-//                paddingLeft = 1
-//                paddingRight = 1
-//            }
-//            header {
-//                row("Initial A", "InitialA bIN", "A", "B", "C","Out", "", "A", "B", "C","Out")
-//            }
+        if (runMode == RunMode.Sample) {
+            return@let part2ExpectedAnswerForSample
+        }
+        runBlocking {
+            println(info)
+            val aStart = 2.0.pow((info.program.size - 1) * 3).toLong()
+            val maxAReg = 2.0.pow((info.program.size) * 3).toLong()
 
-        while (true) {
-            if (aRegister % 100000000 == 0L) {
-                println("$aRegister ${(aRegister * 100) / Int.MAX_VALUE}")
+            val numToCheck = (maxAReg - aStart)
+            println("Num to check = $numToCheck")
+            val threads = Runtime.getRuntime().availableProcessors()
+            val inc = numToCheck / threads
+            println("aStart $aStart max $maxAReg threads $threads inc $inc")
+
+            val scope = CoroutineScope(Dispatchers.Default)
+            return@runBlocking select<Long> {
+                repeat(threads) { thread ->
+                    scope.async {
+                        println("Task $thread is running on thread: ${Thread.currentThread().name}")
+                        println("$runMode Starting with $thread ${aStart + thread * inc}")
+                        runSubset(aStart + thread * inc, info)
+                    }.onAwait {
+                        scope.cancel()
+                        it
+                    }
+                }
             }
+        }
+    }
+
+    private fun runSubset(
+        aStart: Long,
+        info: Parser.Input
+    ): Long {
+        var aRegister = aStart
+        while (true) {
             val current = Parser.Input(
                 regA = aRegister,
                 regB = info.regB,
                 regC = info.regC,
-                output = mutableListOf(),
+                output = null,
                 program = info.program
             )
 
             if (runProgramP2(current)) {
                 println("done $aRegister")
-                return@let aRegister
+                return aRegister
             }
-
-//                // 3 7 4 6 3 2 1 0 7 7 7 0 3 3 1 0 3 7 6 2 3 3 1 0 7 7 1 4 2 01 0 3 7 0 6 2 0 1
-//                row {
-//                    cells(
-//                        aRegister,
-//                        Integer.toBinaryString(aRegister.toInt()),
-//                        Integer.toBinaryString(current.regA.toInt()),
-//                        Integer.toBinaryString(current.regB.toInt()),
-//                        Integer.toBinaryString(current.regC.toInt()),
-//                        current.output.map { Integer.toBinaryString(it.toInt()) }.joinToString(","),
-//                        "",
-//                        current.regA,
-//                        current.regB,
-//                        current.regC,
-//                        current.output.joinToString(","),
-//                        current.output.map { Integer.toBinaryString(it.toInt()) }.joinToString("").let { Integer.valueOf(it, 2) }
-//                    ) {
-//                        this.alignment = TextAlignment.MiddleRight
-//                    }
-//                }
 
             aRegister++
         }
-//        }.also {
-//            println(it)
-//        }
-
-        aRegister
-//        throw Exception("huh")
     }
 
 
@@ -174,7 +167,7 @@ class Main(
     }
 
     fun Parser.Input.out(operand: Long) {
-        output.add(combo(operand) % 8L)
+        output?.add(combo(operand) % 8L)
     }
 
     fun Parser.Input.bdv(operand: Long) {
@@ -186,7 +179,7 @@ class Main(
     }
 
     private fun Parser.Input.combo(op: Long): Long = when (op) {
-        in (0..3) -> op.toLong()
+        in (0..3) -> op
         4L -> regA
         5L -> regB
         6L -> regC
