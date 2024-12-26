@@ -1,12 +1,8 @@
 package y2024.day17
 
-import kotlinx.coroutines.*
-import kotlinx.coroutines.selects.select
 import puzzlerunners.Puzzle
 import utils.RunMode
 import kotlin.math.pow
-
-typealias NewInstructionIndex = Long
 
 class Main(
     override val part1ExpectedAnswerForSample: Any = "4,6,3,5,6,3,5,2,1,0",
@@ -30,59 +26,15 @@ class Main(
         }
     }
 
-    private fun runProgramP2(info: Parser.Input): Boolean {
-        var programIndex = 0
-        var outputIndex = 0
-        val aOrig = info.regA
-
-        while (programIndex <= info.program.lastIndex) {
-            val operation = info.program[programIndex]
-            val operand = info.program[programIndex + 1]
-
-            when (operation) {
-                0L -> info.adv(operand)
-                1L -> info.bxl(operand)
-                2L -> info.bst(operand)
-                3L -> {
-                    info.jnz(operand)?.let {
-                        programIndex = it - 2
-                    }
-                }
-
-                4L -> info.bxc(operand)
-                5L -> {
-                    val out = info.combo(operand) % 8
-                    if (outputIndex > info.program.lastIndex || info.program[outputIndex] != out) {
-                        return false
-                    }
-                    outputIndex++
-                }
-
-                6L -> info.bdv(operand)
-                7L -> info.cdv(operand)
-            }
-
-            programIndex += 2
-        }
-
-        return outputIndex == info.program.size
-    }
-
-
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
-        runSubset(info)
-    }
-
-    private fun runSubset(
-        info: Parser.Input
-    ): Long {
-        var aRegister = 0L
         val powers = Array(info.program.size) { 0 }
         while (true) {
             val aInitial = powers.mapIndexed { index, value ->
-                if (value != 0)
+                if (value != 0) {
                     value * 8.0.pow(index).toLong()
-                else 0L
+                } else {
+                    0L
+                }
             }.sum()
             val current = Parser.Input(
                 regA = aInitial,
@@ -102,7 +54,7 @@ class Main(
                 continue
             }
             if (current.output == current.program) {
-                return aInitial
+                return@let aInitial
             }
             var changed = false
             for (index in powers.lastIndex downTo 0) {
