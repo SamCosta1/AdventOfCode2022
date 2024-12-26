@@ -3,7 +3,7 @@ package y2024.day17
 import utils.split
 
 object Parser {
-    data class Input(var regA: Long, var regB: Long, var regC: Long, val output: MutableList<Long>?, val program: List<Long>)
+    data class Input(var regA: Long, var regB: Long, var regC: Long, val output: MutableList<Long>, val program: List<Long>)
     fun parse(data: List<String>): Input {
         val (registers, program) = data.split { it.isBlank() }
 

@@ -70,119 +70,112 @@ class Main(
 
 
     override fun runPart2(data: List<String>, runMode: RunMode) = Parser.parse(data).let { info ->
-        if (runMode == RunMode.Sample) {
-            return@let part2ExpectedAnswerForSample
-        }
-        runBlocking {
-            println(info)
-            val aStart = 2.0.pow((info.program.size - 1) * 3).toLong()
-            val maxAReg = 2.0.pow((info.program.size) * 3).toLong()
+        runSubset(info)
+    }
 
-            val numToCheck = (maxAReg - aStart)
-            println("Num to check = $numToCheck")
-            val threads = Runtime.getRuntime().availableProcessors()
-            val inc = numToCheck / threads
-            println("aStart $aStart max $maxAReg threads $threads inc $inc")
+    private fun runSubset(
+        info: Parser.Input
+    ): Long {
+        var aRegister = 0L
+        val powers = Array(info.program.size) { 0 }
+        while (true) {
+            val aInitial = powers.mapIndexed { index, value ->
+                if (value != 0)
+                    value * 8.0.pow(index).toLong()
+                else 0L
+            }.sum()
+            val current = Parser.Input(
+                regA = aInitial,
+                regB = info.regB,
+                regC = info.regC,
+                output = mutableListOf(),
+                program = info.program
+            )
 
-            val scope = CoroutineScope(Dispatchers.Default)
-            return@runBlocking select<Long> {
-                repeat(threads) { thread ->
-                    scope.async {
-                        println("Task $thread is running on thread: ${Thread.currentThread().name}")
-                        println("$runMode Starting with $thread ${aStart + thread * inc}")
-                        runSubset(aStart + thread * inc, info)
-                    }.onAwait {
-                        scope.cancel()
-                        it
-                    }
+            runProgramP1(current)
+
+            if (current.output.size > current.program.size) {
+                throw Exception("Went too far :(")
+            }
+            if (current.output.size < current.program.size) {
+                powers[powers.lastIndex]++
+                continue
+            }
+            if (current.output == current.program) {
+                return aInitial
+            }
+            var changed = false
+            for (index in powers.lastIndex downTo 0) {
+                if (changed) {
+                    powers[index] = 0
+                } else if (current.program[index] != current.output[index]) {
+                    powers[index]++
+                    changed = true
                 }
             }
         }
     }
+}
 
-    private fun runSubset(
-        aStart: Long,
-        info: Parser.Input
-    ): Long {
-        var aRegister = aStart
-        while (true) {
-            val current = Parser.Input(
-                regA = aRegister,
-                regB = info.regB,
-                regC = info.regC,
-                output = null,
-                program = info.program
-            )
 
-            if (runProgramP2(current)) {
-                println("done $aRegister")
-                return aRegister
-            }
-
-            aRegister++
-        }
+private fun Parser.Input.execute(operation: Long, operand: Long): Int? {
+    when (operation) {
+        0L -> adv(operand)
+        1L -> bxl(operand)
+        2L -> bst(operand)
+        3L -> return jnz(operand)
+        4L -> bxc(operand)
+        5L -> out(operand)
+        6L -> bdv(operand)
+        7L -> cdv(operand)
     }
+    return null
+}
 
+fun Parser.Input.division(operand: Long): Long {
+    val numerator = regA
+    return numerator.shr(combo(operand).toInt())
+}
 
-    private fun Parser.Input.execute(operation: Long, operand: Long): Int? {
-        when (operation) {
-            0L -> adv(operand)
-            1L -> bxl(operand)
-            2L -> bst(operand)
-            3L -> return jnz(operand)
-            4L -> bxc(operand)
-            5L -> out(operand)
-            6L -> bdv(operand)
-            7L -> cdv(operand)
-        }
+fun Parser.Input.adv(operand: Long) {
+    regA = division(operand)
+}
+
+fun Parser.Input.bxl(operand: Long) {
+    regB = regB xor operand
+}
+
+fun Parser.Input.bst(operand: Long) {
+    regB = combo(operand) % 8L
+}
+
+fun Parser.Input.jnz(operand: Long): Int? {
+    if (regA == 0L) {
         return null
     }
+    return operand.toInt()
+}
 
-    fun Parser.Input.division(operand: Long): Long {
-        val numerator = regA
-        return numerator.shr(combo(operand).toInt())
-    }
+fun Parser.Input.bxc(operand: Long) {
+    regB = regB xor regC
+}
 
-    fun Parser.Input.adv(operand: Long) {
-        regA = division(operand)
-    }
+fun Parser.Input.out(operand: Long) {
+    output?.add(combo(operand) % 8L)
+}
 
-    fun Parser.Input.bxl(operand: Long) {
-        regB = regB xor operand
-    }
+fun Parser.Input.bdv(operand: Long) {
+    regB = division(operand)
+}
 
-    fun Parser.Input.bst(operand: Long) {
-        regB = combo(operand) % 8L
-    }
+fun Parser.Input.cdv(operand: Long) {
+    regC = division(operand)
+}
 
-    fun Parser.Input.jnz(operand: Long): Int? {
-        if (regA == 0L) {
-            return null
-        }
-        return operand.toInt()
-    }
-
-    fun Parser.Input.bxc(operand: Long) {
-        regB = regB xor regC
-    }
-
-    fun Parser.Input.out(operand: Long) {
-        output?.add(combo(operand) % 8L)
-    }
-
-    fun Parser.Input.bdv(operand: Long) {
-        regB = division(operand)
-    }
-
-    fun Parser.Input.cdv(operand: Long) {
-        regC = division(operand)
-    }
-
-    private fun Parser.Input.combo(op: Long): Long = when (op) {
-        in (0..3) -> op
-        4L -> regA
-        5L -> regB
-        6L -> regC
-        else -> throw Exception("Found operand $op")
-    }
+private fun Parser.Input.combo(op: Long): Long = when (op) {
+    in (0..3) -> op
+    4L -> regA
+    5L -> regB
+    6L -> regC
+    else -> throw Exception("Found operand $op")
 }
