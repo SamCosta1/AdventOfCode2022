@@ -13,6 +13,5 @@ fun main() {
 //    println(AsciiTableGenerator.formatInProgress(Main2024.runAll()))
 //    println(AsciiGraphGenerator.formatGraph(Main2024.runAll()))
 
-    println(AsciiTableGenerator.formatInProgress(Main2024.run(17)))
-//    println(AsciiTableGenerator.formatInProgress(Main2024.runLatest()))
+    println(AsciiTableGenerator.formatInProgress(Main2024.runLatest()))
 }
